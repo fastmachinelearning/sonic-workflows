@@ -1,0 +1,10 @@
+# binary files
+*.root
+*.pyc
+
+# python kibble
+__init__.py
+
+# text files
+*.log
+
