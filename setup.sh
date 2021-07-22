@@ -44,6 +44,7 @@ else
 	usage 1
 fi
 
+export SCRAM_ARCH=slc7_amd64_gcc900
 scram project CMSSW_12_0_0_pre4
 cd CMSSW_12_0_0_pre4/src
 eval `scramv1 runtime -sh`
@@ -53,5 +54,5 @@ git cms-addpkg HeterogeneousCore/SonicTriton
 git clone ${ACCESS_GITHUB}fastmachinelearning/sonic-models HeterogeneousCore/SonicTriton/data
 git cms-addpkg RecoBTag/Combined
 git clone ${ACCESS_GITHUB}fastmachinelearning/RecoBTag-Combined -b add_noragged RecoBTag/Combined/data
-git clone ${ACCESS_GITHUB}fastmachinelearning/sonic-models
+git clone ${ACCESS_GITHUB}fastmachinelearning/sonic-workflows
 scram b -j ${CORES}
