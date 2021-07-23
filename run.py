@@ -64,10 +64,25 @@ if len(options.address)>0:
         )
     )
 
+if options.verbose:
+    keepMsgs = ['TritonClient','TritonService']
+    for producer in process._Process__producers.values():
+        if hasattr(producer,'Client') and hasattr(producer.Client,'verbose'):
+            producer.Client.verbose = True
+            keepMsgs.extend([producer._TypedParameterizable__type,producer._TypedParameterizable__type+":TritonClient"])
+    process.load('FWCore/MessageService/MessageLogger_cfi')
+    process.MessageLogger.cerr.FwkReport.reportEvery = 500
+    for msg in keepMsgs:
+        setattr(process.MessageLogger.cerr,msg,
+            cms.untracked.PSet(
+                limit = cms.untracked.int32(10000000),
+            )
+        )
+
 if options.tmi:
     from Validation.Performance.TimeMemorySummary import customise
     process = customise(process)
-    
+
 if options.dump:
-    print process.dumpPython()
+    print(process.dumpPython())
     sys.exit(0)
