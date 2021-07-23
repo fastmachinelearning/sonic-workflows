@@ -50,19 +50,20 @@ if options.threads>0:
 
 process.maxEvents.input = cms.untracked.int32(options.maxEvents)
 
-process.TritonService.verbose = options.verbose
-process.TritonService.fallback.verbose = options.verbose
-process.TritonService.fallback.useDocker = options.docker
-if options.device != "auto":
-    process.TritonService.fallback.useGPU = options.device=="gpu"
-if len(options.address)>0:
-    process.TritonService.servers.append(
-        cms.PSet(
-            name = cms.untracked.string(options.serverName),
-            address = cms.untracked.string(options.address),
-            port = cms.untracked.uint32(options.port),
+if options.sonic:
+    process.TritonService.verbose = options.verbose
+    process.TritonService.fallback.verbose = options.verbose
+    process.TritonService.fallback.useDocker = options.docker
+    if options.device != "auto":
+        process.TritonService.fallback.useGPU = options.device=="gpu"
+    if len(options.address)>0:
+        process.TritonService.servers.append(
+            cms.PSet(
+                name = cms.untracked.string(options.serverName),
+                address = cms.untracked.string(options.address),
+                port = cms.untracked.uint32(options.port),
+            )
         )
-    )
 
 if options.verbose:
     keepMsgs = ['TritonClient','TritonService']
