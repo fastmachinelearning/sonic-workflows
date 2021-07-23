@@ -13,8 +13,7 @@ cmsenv
 
 ## Running
 ```bash
-cmsRun step2_PAT.py
-cmsRun step2Sonic_PAT.py
+cmsRun run.py
 ```
 
 ## Driver commands
@@ -28,9 +27,8 @@ Modified commands:
 ```
 dasgoclient --limit 0 --query 'file dataset=/RelValProdTTbar_13_pmx25ns/CMSSW_10_6_4-PUpmx25ns_106X_upgrade2018_realistic_v9-v1/AODSIM' | sort -u > step1_dasquery.log
 cmsDriver.py step2  -s PAT --era Run2_2018 -n 100 --process PAT --conditions auto:phase1_2018_realistic --mc  --scenario pp --eventcontent MINIAODSIM --datatier MINIAODSIM --procModifiers run2_miniAOD_UL_preSummer20 --no_exec --filein filelist:step1_dasquery.log --fileout file:step2.root
-cmsDriver.py step2Sonic  -s PAT --era Run2_2018 -n 100 --process PAT --conditions auto:phase1_2018_realistic --mc  --scenario pp --eventcontent MINIAODSIM --datatier MINIAODSIM --procModifiers run2_miniAOD_UL_preSummer20,allSonicTriton --no_exec --filein filelist:step1_dasquery.log --fileout file:step2Sonic.root
 ```
 
 UL re-miniAOD workflows for other years: 1325.516, 1325.5161, 1325.517
 
-
+Run3/Phase2 SONIC-enabled workflows are available from `runTheMatrix.py -w upgrade -n` with suffix `.9001`
