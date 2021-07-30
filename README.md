@@ -7,7 +7,7 @@ This repository serves to deploy and run SONIC workflows for performance tests.
 wget https://raw.githubusercontent.com/fastmachinelearning/sonic-workflows/master/setup.sh
 chmod +x setup.sh
 ./setup.sh
-cd CMSSW_12_0_0_pre4/src/sonic-workflows
+cd CMSSW_12_0_0_pre5/src/sonic-workflows
 cmsenv
 ```
 
