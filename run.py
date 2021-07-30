@@ -3,6 +3,7 @@ from FWCore.ParameterSet.VarParsing import VarParsing
 import sys
 
 # choices
+allowed_compression = ["none","deflate","gzip"]
 allowed_devices = ["auto","cpu","gpu"]
 
 options = VarParsing()
@@ -17,6 +18,8 @@ options.register("threads", 1, VarParsing.multiplicity.singleton, VarParsing.var
 options.register("streams", 0, VarParsing.multiplicity.singleton, VarParsing.varType.int, "number of streams")
 options.register("verbose", False, VarParsing.multiplicity.singleton, VarParsing.varType.bool, "enable verbose output")
 options.register("shm", True, VarParsing.multiplicity.singleton, VarParsing.varType.bool, "enable shared memory")
+options.register("compression", "", VarParsing.multiplicity.singleton, VarParsing.varType.string, "enable I/O compression (choices: {})".format(', '.join(allowed_compression)))
+options.register("ssl", False, VarParsing.multiplicity.singleton, VarParsing.varType.bool, "enable SSL authentication for server communication")
 options.register("device","auto", VarParsing.multiplicity.singleton, VarParsing.varType.string, "specify device for fallback server (choices: {})".format(', '.join(allowed_devices)))
 options.register("docker", False, VarParsing.multiplicity.singleton, VarParsing.varType.bool, "use Docker for fallback server")
 options.register("tmi", False, VarParsing.multiplicity.singleton, VarParsing.varType.bool, "include time/memory summary")
@@ -29,6 +32,10 @@ if len(options.params)>0:
     options.address = pdict["address"]
     options.port = int(pdict["port"])
     print("server = "+options.address+":"+str(options.port))
+
+# check compression
+if len(options.compression)>0 and options.compression not in allowed_compression:
+    raise ValueError("Unknown compression setting: {}".format(options.compression))
 
 # check devices
 options.device = options.device.lower()
@@ -62,15 +69,26 @@ if options.sonic:
                 name = cms.untracked.string(options.serverName),
                 address = cms.untracked.string(options.address),
                 port = cms.untracked.uint32(options.port),
+                useSsl = cms.untracked.bool(options.ssl),
+                rootCertificates = cms.untracked.string(""),
+                privateKey = cms.untracked.string(""),
+                certificateChain = cms.untracked.string(""),
             )
         )
 
-if options.verbose:
-    keepMsgs = ['TritonClient','TritonService']
-    for producer in process._Process__producers.values():
-        if hasattr(producer,'Client') and hasattr(producer.Client,'verbose'):
-            producer.Client.verbose = True
+# propagate changes to all SONIC producers
+keepMsgs = ['TritonClient','TritonService']
+for producer in process._Process__producers.values():
+    if hasattr(producer,'Client'):
+        if hasattr(producer.Client,'verbose'):
+            producer.Client.verbose = options.verbose
             keepMsgs.extend([producer._TypedParameterizable__type,producer._TypedParameterizable__type+":TritonClient"])
+        if hasattr(producer.Client,'compression'):
+            producer.Client.compression = options.compression
+        if hasattr(producer.Client,'useSharedMemory'):
+            producer.Client.useSharedMemory = options.shm
+
+if options.verbose:
     process.load('FWCore/MessageService/MessageLogger_cfi')
     process.MessageLogger.cerr.FwkReport.reportEvery = 500
     for msg in keepMsgs:
