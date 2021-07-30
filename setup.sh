@@ -3,6 +3,11 @@
 ACCESS=ssh
 CORES=8
 BATCH=""
+CMSSWVER=CMSSW_12_0_0_pre5
+CMSSWVERS=(
+CMSSW_12_0_0_pre4 \
+CMSSW_12_0_0_pre5 \
+)
 
 usage(){
 	EXIT=$1
@@ -10,6 +15,7 @@ usage(){
 	echo "setup.sh [options]"
 	echo ""
 	echo "-B                  configure some settings for checkout within batch setups (default = ${BATCH})"
+	echo "-C                  choose CMSSW version (default = ${CMSSWVER}, choices=${CMSSWVERS[@]})"
 	echo "-a [protocol]       use protocol to clone (default = ${ACCESS}, alternative = https)"
 	echo "-j [cores]          run CMSSW compilation on # cores (default = ${CORES})"
 	echo "-h                  display this message and exit"
@@ -18,9 +24,11 @@ usage(){
 }
 
 # process options
-while getopts "Ba:j:h" opt; do
+while getopts "BC:a:j:h" opt; do
 	case "$opt" in
 	B) BATCH=--upstream-only
+	;;
+	C) CMSSWVER=$OPTARG
 	;;
 	a) ACCESS=$OPTARG
 	;;
@@ -44,12 +52,18 @@ else
 	usage 1
 fi
 
+# check CMSSW version
+if [[ ! " ${CMSSWVERS[@]} " =~ " $CMSSWVER " ]]; then
+	echo "Unsupported CMSSW version: $CMSSWVER"
+	usage 1
+fi
+
 export SCRAM_ARCH=slc7_amd64_gcc900
-scram project CMSSW_12_0_0_pre5
-cd CMSSW_12_0_0_pre5/src
+scram project $CMSSWVER
+cd ${CMSSWVER}/src
 eval `scramv1 runtime -sh`
 git cms-init $ACCESS_CMSSW $BATCH
-git cms-checkout-topic $ACCESS_CMSSW fastmachinelearning:CMSSW_12_0_0_pre5_SONIC
+git cms-checkout-topic $ACCESS_CMSSW fastmachinelearning:${CMSSVER}_SONIC
 git cms-addpkg HeterogeneousCore/SonicTriton
 git clone ${ACCESS_GITHUB}fastmachinelearning/sonic-models HeterogeneousCore/SonicTriton/data
 git cms-addpkg RecoBTag/Combined
