@@ -63,7 +63,7 @@ scram project $CMSSWVER
 cd ${CMSSWVER}/src
 eval `scramv1 runtime -sh`
 git cms-init $ACCESS_CMSSW $BATCH
-git cms-checkout-topic $ACCESS_CMSSW fastmachinelearning:${CMSSVER}_SONIC
+git cms-checkout-topic $ACCESS_CMSSW fastmachinelearning:${CMSSWVER}_SONIC
 git cms-addpkg HeterogeneousCore/SonicTriton
 git clone ${ACCESS_GITHUB}fastmachinelearning/sonic-models HeterogeneousCore/SonicTriton/data
 git cms-addpkg RecoBTag/Combined
