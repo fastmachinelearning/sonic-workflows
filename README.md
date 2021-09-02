@@ -16,6 +16,11 @@ cmsenv
 cmsRun run.py
 ```
 
+To run the Run-3 workflow, change it to 
+```bash
+cmsRun run.py config=step4_PAT_Run3
+```
+
 ## Driver commands
 
 2018 ultra-legacy re-miniAOD:
@@ -30,5 +35,16 @@ cmsDriver.py step2  -s PAT --era Run2_2018 -n 100 --process PAT --conditions aut
 ```
 
 UL re-miniAOD workflows for other years: 1325.516, 1325.5161, 1325.517
+
+2021 Run-3 MiniAOD
+```bash
+runTheMatrix.py -w upgrade -n -l 11834.21 --dryRun --command="--no_exec"
+```
+
+Modified commands:
+```
+dasgoclient --limit 0 --query 'file dataset=/RelValTTbar_14TeV/CMSSW_12_0_0_pre4-PU_120X_mcRun3_2021_realistic_v2-v1/GEN-SIM-RECO' | sort -u > step3_dasquery.log
+cmsDriver.py step4  -s PAT --conditions auto:phase1_2021_realistic --datatier MINIAODSIM -n 10 --eventcontent MINIAODSIM --geometry DB:Extended --era Run3 --no_exec --filein filelist:step3_dasquery.log  --fileout file:step4.root
+```
 
 Run3/Phase2 SONIC-enabled workflows are available from `runTheMatrix.py -w upgrade -n` with suffix `.9001`
