@@ -2,7 +2,7 @@
 # using: 
 # Revision: 1.19 
 # Source: /local/reps/CMSSW/CMSSW/Configuration/Applications/python/ConfigBuilder.py,v 
-# with command line options: step4 -s PAT --conditions auto:phase1_2021_realistic --datatier MINIAODSIM -n 10 --eventcontent MINIAODSIM --geometry DB:Extended --era Run3 --pileup Run3_Flat55To75_PoissonOOTPU --pileup_input das:/RelValMinBias_14TeV/CMSSW_12_0_0_pre4-120X_mcRun3_2021_realistic_v2-v1/GEN-SIM --no_exec --filein file:step3.root --fileout file:step4.root
+# with command line options: step4 -s PAT --conditions auto:phase1_2021_realistic --datatier MINIAODSIM -n 10 --eventcontent MINIAODSIM --geometry DB:Extended --era Run3 --no_exec --filein step3.root --fileout file:step4.root
 import FWCore.ParameterSet.Config as cms
 
 from Configuration.Eras.Era_Run3_cff import Run3
@@ -30,7 +30,15 @@ process.maxEvents = cms.untracked.PSet(
 # Input source
 process.source = cms.Source("PoolSource",
     fileNames = cms.untracked.vstring(
-        'file:/storage/local/data2/yfeng/relvar/Run3/63718711-dca3-488a-b6dc-6989dfa81707.root',
+        '/store/relval/CMSSW_12_0_0_pre4/RelValTTbar_14TeV/GEN-SIM-RECO/PU_120X_mcRun3_2021_realistic_v2-v1/00000/63718711-dca3-488a-b6dc-6989dfa81707.root',
+        '/store/relval/CMSSW_12_0_0_pre4/RelValTTbar_14TeV/GEN-SIM-RECO/PU_120X_mcRun3_2021_realistic_v2-v1/00000/8164cd2c-6382-4f17-8a06-efdc9654f17b.root',
+        '/store/relval/CMSSW_12_0_0_pre4/RelValTTbar_14TeV/GEN-SIM-RECO/PU_120X_mcRun3_2021_realistic_v2-v1/00000/8ef2d442-2742-44f3-9a3a-98c01436f16f.root',
+        '/store/relval/CMSSW_12_0_0_pre4/RelValTTbar_14TeV/GEN-SIM-RECO/PU_120X_mcRun3_2021_realistic_v2-v1/00000/b9d51ca4-e359-4598-92f7-1192501ba179.root',
+        '/store/relval/CMSSW_12_0_0_pre4/RelValTTbar_14TeV/GEN-SIM-RECO/PU_120X_mcRun3_2021_realistic_v2-v1/00000/bf8a8e1e-6f73-4db0-b590-6c06fef4da85.root',
+        '/store/relval/CMSSW_12_0_0_pre4/RelValTTbar_14TeV/GEN-SIM-RECO/PU_120X_mcRun3_2021_realistic_v2-v1/00000/cef37bb0-8480-401a-bf1c-339b4c0e6508.root',
+        '/store/relval/CMSSW_12_0_0_pre4/RelValTTbar_14TeV/GEN-SIM-RECO/PU_120X_mcRun3_2021_realistic_v2-v1/00000/df2942fa-7e7d-4212-8736-4c06862a733b.root',
+        '/store/relval/CMSSW_12_0_0_pre4/RelValTTbar_14TeV/GEN-SIM-RECO/PU_120X_mcRun3_2021_realistic_v2-v1/00000/f4f93455-b04b-49b9-a036-7b0e8c22d0ee.root',
+        '/store/relval/CMSSW_12_0_0_pre4/RelValTTbar_14TeV/GEN-SIM-RECO/PU_120X_mcRun3_2021_realistic_v2-v1/00000/f815ac1b-06fe-4027-9d0d-a6df7d154937.root',
     ),
     secondaryFileNames = cms.untracked.vstring()
 )
