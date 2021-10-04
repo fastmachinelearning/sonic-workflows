@@ -2,6 +2,10 @@ import FWCore.ParameterSet.Config as cms
 from FWCore.ParameterSet.VarParsing import VarParsing
 import sys
 
+# helper
+def import_obj(src,obj):
+    return getattr(__import__(src,fromlist=[obj]),obj)
+
 # choices
 allowed_compression = ["none","deflate","gzip"]
 allowed_devices = ["auto","cpu","gpu"]
@@ -22,6 +26,7 @@ options.register("compression", "", VarParsing.multiplicity.singleton, VarParsin
 options.register("ssl", False, VarParsing.multiplicity.singleton, VarParsing.varType.bool, "enable SSL authentication for server communication")
 options.register("device","auto", VarParsing.multiplicity.singleton, VarParsing.varType.string, "specify device for fallback server (choices: {})".format(', '.join(allowed_devices)))
 options.register("docker", False, VarParsing.multiplicity.singleton, VarParsing.varType.bool, "use Docker for fallback server")
+options.register("modifiers", "", VarParsing.multiplicity.list, VarParsing.varType.string, "additional process modifiers")
 options.register("tmi", False, VarParsing.multiplicity.singleton, VarParsing.varType.bool, "include time/memory summary")
 options.register("dump", False, VarParsing.multiplicity.singleton, VarParsing.varType.bool, "dump process python config")
 options.parseArguments()
@@ -42,14 +47,19 @@ options.device = options.device.lower()
 if options.device not in allowed_devices:
     raise ValueError("Unknown device: {}".format(options.device))
 
-from Configuration.ProcessModifiers.allSonicTriton_cff import allSonicTriton
-# need to do this before process is created/imported
-if options.sonic:
-    allSonicTriton._setChosen()
+# activate modifiers
+modifier_names = ["allSonicTriton"]+[x for x in options.modifiers]
+print(modifier_names)
+modifiers = []
+for modifier in modifier_names:
+    modifiers.append(import_obj("Configuration.ProcessModifiers.{}_cff".format(modifier),modifier))
+    # need to do this before process is created/imported
+    modifiers[-1]._setChosen()
+print(modifiers)
 
-process = getattr(__import__(options.config,fromlist=["process"]),"process")
+process = import_obj(options.config,"process")
 if options.sonic:
-    process._Process__modifiers = process._Process__modifiers + (allSonicTriton,)
+    process._Process__modifiers = process._Process__modifiers + tuple(modifiers)
 
 if options.threads>0:
     process.options.numberOfThreads = options.threads
