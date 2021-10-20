@@ -48,17 +48,18 @@ if options.device not in allowed_devices:
     raise ValueError("Unknown device: {}".format(options.device))
 
 # activate modifiers
-modifier_names = ["allSonicTriton"]+[x for x in options.modifiers]
-print(modifier_names)
+modifier_names = []
+if options.sonic:
+    modifier_names = ["allSonicTriton"]
+modifier_names = modifier_names+[x for x in options.modifiers]
 modifiers = []
 for modifier in modifier_names:
     modifiers.append(import_obj("Configuration.ProcessModifiers.{}_cff".format(modifier),modifier))
     # need to do this before process is created/imported
     modifiers[-1]._setChosen()
-print(modifiers)
 
 process = import_obj(options.config,"process")
-if options.sonic:
+if len(modifiers)>0:
     process._Process__modifiers = process._Process__modifiers + tuple(modifiers)
 
 if options.threads>0:
