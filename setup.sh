@@ -3,10 +3,9 @@
 ACCESS=ssh
 CORES=8
 BATCH=""
-CMSSWVER=CMSSW_12_0_0_pre5
+CMSSWVER=CMSSW_12_1_0_pre5
 CMSSWVERS=(
-CMSSW_12_0_0_pre4 \
-CMSSW_12_0_0_pre5 \
+CMSSW_12_1_0_pre5 \
 )
 
 usage(){
@@ -63,10 +62,8 @@ scram project $CMSSWVER
 cd ${CMSSWVER}/src
 eval `scramv1 runtime -sh`
 git cms-init $ACCESS_CMSSW $BATCH
-git cms-checkout-topic $ACCESS_CMSSW fastmachinelearning:${CMSSWVER}_SONIC
+git cms-checkout-topic $ACCESS_CMSSW fastmachinelearning:${CMSSWVER}_SONIC_hgcal
 git cms-addpkg HeterogeneousCore/SonicTriton
-git clone ${ACCESS_GITHUB}fastmachinelearning/sonic-models HeterogeneousCore/SonicTriton/data
-git cms-addpkg RecoBTag/Combined
-git clone ${ACCESS_GITHUB}fastmachinelearning/RecoBTag-Combined -b add_noragged RecoBTag/Combined/data
-git clone ${ACCESS_GITHUB}fastmachinelearning/sonic-workflows
+git clone ${ACCESS_GITHUB}fastmachinelearning/sonic-models HeterogeneousCore/SonicTriton/data -b hgcal121X
+git clone ${ACCESS_GITHUB}fastmachinelearning/sonic-workflows -b hgcal121X
 scram b -j ${CORES}
