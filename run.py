@@ -20,6 +20,9 @@ options.register("port", 8001, VarParsing.multiplicity.singleton, VarParsing.var
 options.register("params", "", VarParsing.multiplicity.singleton, VarParsing.varType.string, "json file containing server address/port")
 options.register("threads", 1, VarParsing.multiplicity.singleton, VarParsing.varType.int, "number of threads")
 options.register("streams", 0, VarParsing.multiplicity.singleton, VarParsing.varType.int, "number of streams")
+options.register("input", "", VarParsing.multiplicity.singleton, VarParsing.varType.string, "input file")
+options.register("output", "", VarParsing.multiplicity.singleton, VarParsing.varType.string, "output file")
+options.register("duplicate", 0, VarParsing.multiplicity.singleton, VarParsing.varType.int, "duplicate input file N times (for testing)")
 options.register("verbose", False, VarParsing.multiplicity.singleton, VarParsing.varType.bool, "enable verbose output")
 options.register("shm", True, VarParsing.multiplicity.singleton, VarParsing.varType.bool, "enable shared memory")
 options.register("compression", "", VarParsing.multiplicity.singleton, VarParsing.varType.string, "enable I/O compression (choices: {})".format(', '.join(allowed_compression)))
@@ -67,6 +70,12 @@ if options.threads>0:
     process.options.numberOfStreams = options.streams
 
 process.maxEvents.input = cms.untracked.int32(options.maxEvents)
+
+if len(options.input)>0:
+    process.source.fileNames = cms.untracked.vstring([options.input]*max(1,options.duplicate))
+    if options.duplicate>0: process.source.duplicateCheckMode = cms.untracked.string("noDuplicateCheck")
+if len(options.output)>0:
+    process.MINIAODSIMoutput.fileName = cms.untracked.string(options.output)
 
 if options.sonic:
     process.TritonService.verbose = options.verbose
