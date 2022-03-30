@@ -5,6 +5,7 @@ NTHREADS=0
 NJOBS=0
 SONIC=0
 ARGS=""
+PORTBASE=8000
 INFILE="file:store_relval_CMSSW_12_0_0_pre4_RelValTTbar_14TeV_GEN-SIM-RECO_PU_120X_mcRun3_2021_realistic_v2-v1_00000_63718711-dca3-488a-b6dc-6989dfa81707.root"
 NCPU=$(cat /proc/cpuinfo | grep processor | wc -l)
 # check for hyperthreading
@@ -76,7 +77,7 @@ declare -A JOBS
 for ((nj=0;nj<$NJOBS;nj++)); do
 	# run job
 	JOBNAME=job${nj}_th${NTHREADS}
-	cmsRun run.py config=step4_PAT_Run3 tmi=1 device=cpu sonic=$SONIC threads=$NTHREADS input=$INFILE output="file:out_${JOBNAME}.root" duplicate=$DUP $ARGS >& log_${JOBNAME}.log &
+	cmsRun run.py config=step4_PAT_Run3 tmi=1 device=cpu sonic=$SONIC threads=$NTHREADS input=$INFILE output="file:out_${JOBNAME}.root" duplicate=$DUP fallbackPort=$((PORTBASE+3*nj)) $ARGS >& log_${JOBNAME}.log &
 	JOBS[$nj]=$!
 done
 

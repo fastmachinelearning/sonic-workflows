@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -ex
 
 # fully loaded configuration: 3, 6, 18 threads
 for NTH in 3 6 18; do
