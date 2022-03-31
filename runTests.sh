@@ -8,4 +8,5 @@ done
 
 # todo:
 # test w/ single server for all jobs
+# test w/ GPU server (single or multiple, i.e. "fallback")
 # test w/ only ML modules in workflow? e.g. drop all other products & rely on unscheduled mode, would require higher duplicate factor
