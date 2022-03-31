@@ -16,9 +16,19 @@ fi
 # to kill busy processes
 declare -A PIDS
 kill_busy(){
+	# disable errexit because cmsTriton stop may fail if server didn't start properly
+	set +e
+
 	for PID in ${PIDS[@]}; do
 		kill $PID >& /dev/null
 		wait $PID || true >& /dev/null
+	done
+
+	# manually stop CPU server
+	for ((nj=0;nj<$NJOBS;nj++)); do
+		if [ "$SONIC" -eq 1 ]; then
+			cmsTriton -v -c -n triton_server_instance_${nj} stop
+		fi
 	done
 }
 trap "kill_busy" EXIT
@@ -75,9 +85,13 @@ done
 mkdir $TESTNAME && cd $TESTNAME && ln -s ../*.py . && ln -s ../*.root .
 declare -A JOBS
 for ((nj=0;nj<$NJOBS;nj++)); do
+	# manually start CPU server
+	if [ "$SONIC" -eq 1 ]; then
+		cmsTriton -P $((PORTBASE+3*nj)) -v -c -n triton_server_instance_${nj} -m $CMSSW_BASE/src/HeterogeneousCore/SonicTriton/data/models/particlenet_AK8_MassRegression/config.pbtxt -m $CMSSW_BASE/src/HeterogeneousCore/SonicTriton/data/models/deepmet/config.pbtxt -m $CMSSW_BASE/src/HeterogeneousCore/SonicTriton/data/models/particlenet_AK8_MD-2prong/config.pbtxt -m $CMSSW_BASE/src/HeterogeneousCore/SonicTriton/data/models/particlenet_AK4/config.pbtxt -m $CMSSW_BASE/src/HeterogeneousCore/SonicTriton/data/models/deeptau_nosplit/config.pbtxt -m $CMSSW_BASE/src/HeterogeneousCore/SonicTriton/data/models/particlenet/config.pbtxt start
+	fi
 	# run job
 	JOBNAME=job${nj}_th${NTHREADS}
-	cmsRun run.py config=step4_PAT_Run3 tmi=1 device=cpu sonic=$SONIC threads=$NTHREADS input=$INFILE output="file:out_${JOBNAME}.root" duplicate=$DUP fallbackPort=$((PORTBASE+3*nj)) $ARGS >& log_${JOBNAME}.log &
+	cmsRun run.py config=step4_PAT_Run3 tmi=1 device=cpu sonic=$SONIC threads=$NTHREADS input=$INFILE output="file:out_${JOBNAME}.root" duplicate=$DUP address=0.0.0.0 port=$((PORTBASE+3*nj+1)) fallback=0 $ARGS >& log_${JOBNAME}.log &
 	JOBS[$nj]=$!
 done
 
