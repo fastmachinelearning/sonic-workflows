@@ -17,6 +17,7 @@ options.register("sonic", True, VarParsing.multiplicity.singleton, VarParsing.va
 options.register("serverName", "default", VarParsing.multiplicity.singleton, VarParsing.varType.string, "name for server (used internally)")
 options.register("address", "", VarParsing.multiplicity.singleton, VarParsing.varType.string, "server address")
 options.register("port", 8001, VarParsing.multiplicity.singleton, VarParsing.varType.int, "server port")
+options.register("fallback", True, VarParsing.multiplicity.singleton, VarParsing.varType.bool, "enable fallback server")
 options.register("fallbackPort", -1, VarParsing.multiplicity.singleton, VarParsing.varType.int, "fallback server port")
 options.register("wait", 0, VarParsing.multiplicity.singleton, VarParsing.varType.int, "fallback server startup wait time")
 options.register("params", "", VarParsing.multiplicity.singleton, VarParsing.varType.string, "json file containing server address/port")
@@ -81,6 +82,7 @@ if len(options.output)>0:
 
 if options.sonic:
     process.TritonService.verbose = options.verbose
+    process.TritonService.fallback.enable = options.fallback
     process.TritonService.fallback.verbose = options.verbose
     process.TritonService.fallback.useDocker = options.docker
     process.TritonService.fallback.port = options.fallbackPort
