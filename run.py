@@ -18,6 +18,7 @@ options.register("serverName", "default", VarParsing.multiplicity.singleton, Var
 options.register("address", "", VarParsing.multiplicity.singleton, VarParsing.varType.string, "server address")
 options.register("port", 8001, VarParsing.multiplicity.singleton, VarParsing.varType.int, "server port")
 options.register("fallbackPort", -1, VarParsing.multiplicity.singleton, VarParsing.varType.int, "fallback server port")
+options.register("wait", 0, VarParsing.multiplicity.singleton, VarParsing.varType.int, "fallback server startup wait time")
 options.register("params", "", VarParsing.multiplicity.singleton, VarParsing.varType.string, "json file containing server address/port")
 options.register("threads", 1, VarParsing.multiplicity.singleton, VarParsing.varType.int, "number of threads")
 options.register("streams", 0, VarParsing.multiplicity.singleton, VarParsing.varType.int, "number of streams")
@@ -83,6 +84,7 @@ if options.sonic:
     process.TritonService.fallback.verbose = options.verbose
     process.TritonService.fallback.useDocker = options.docker
     process.TritonService.fallback.port = options.fallbackPort
+    if options.wait>0: process.TritonService.fallback.wait = options.wait
     if options.device != "auto":
         process.TritonService.fallback.useGPU = options.device=="gpu"
     if len(options.address)>0:
