@@ -4,8 +4,9 @@ TESTNAME=""
 NTHREADS=0
 NJOBS=0
 SONIC=0
+DEVICE=cpu
+MANUAL=0
 ARGS=""
-PORTBASE=8000
 INFILE="file:store_relval_CMSSW_12_0_0_pre4_RelValTTbar_14TeV_GEN-SIM-RECO_PU_120X_mcRun3_2021_realistic_v2-v1_00000_63718711-dca3-488a-b6dc-6989dfa81707.root"
 NCPU=$(cat /proc/cpuinfo | grep processor | wc -l)
 # check for hyperthreading
@@ -16,14 +17,21 @@ fi
 # to kill busy processes
 declare -A PIDS
 kill_busy(){
+	# disable errexit because cmsTriton stop may fail if server didn't start properly
+	set +e
+
 	for PID in ${PIDS[@]}; do
 		kill $PID >& /dev/null
 		wait $PID || true >& /dev/null
 	done
+
+	if [ "$MANUAL" -eq 1 ]; then
+		cmsTriton -n triton_server_instance stop
+	fi
 }
 trap "kill_busy" EXIT
 
-while getopts "t:n:j:a:s" opt; do
+while getopts "t:n:j:a:sgm" opt; do
 	case "$opt" in
 		t) TESTNAME=$OPTARG
 		;;
@@ -34,6 +42,10 @@ while getopts "t:n:j:a:s" opt; do
 		a) ARGS="$OPTARG"
 		;;
 		s) SONIC=1
+		;;
+		g) DEVICE=gpu
+		;;
+		m) MANUAL=1
 		;;
 	esac
 done
@@ -72,12 +84,26 @@ for ((extra=0;extra<$NLEFT;extra++)); do
 	PIDS[$extra]=$!
 done
 
+# set up test area
 mkdir $TESTNAME && cd $TESTNAME && ln -s ../*.py . && ln -s ../*.root .
+
+# manually provide a server
+if [ "$MANUAL" -eq 1 ]; then
+	GPUSERVER=""
+	if [ "$DEVICE" == "gpu" ]; then
+		GPUSERVER="-g"
+	fi
+	TRITON_START=$(cmsTriton $GPUSERVER -P -1 -n triton_server_instance -M $CMSSW_BASE/src/HeterogeneousCore/SonicTriton/data/models start)
+	echo "$TRITON_START"
+	TRITON_PORT=$(echo "$TRITON_START" | grep -F "CMS_TRITON_GRPC_PORT: " | sed 's/CMS_TRITON_GRPC_PORT: //')
+	ARGS="address=0.0.0.0 port=$TRITON_PORT fallback=0 $ARGS"
+fi
+
 declare -A JOBS
 for ((nj=0;nj<$NJOBS;nj++)); do
 	# run job
 	JOBNAME=job${nj}_th${NTHREADS}
-	cmsRun run.py config=step4_PAT_Run3 tmi=1 device=cpu sonic=$SONIC threads=$NTHREADS input=$INFILE output="file:out_${JOBNAME}.root" duplicate=$DUP fallbackPort=$((PORTBASE+3*nj)) $ARGS >& log_${JOBNAME}.log &
+	cmsRun run.py config=step4_PAT_Run3 tmi=1 device=$DEVICE sonic=$SONIC threads=$NTHREADS input=$INFILE output="file:out_${JOBNAME}.root" duplicate=$DUP $ARGS >& log_${JOBNAME}.log &
 	JOBS[$nj]=$!
 done
 
@@ -85,3 +111,8 @@ done
 for JOB in ${JOBS[@]}; do
 	wait $JOB || true >& /dev/null
 done
+
+# remove manual server
+if [ "$MANUAL" -eq 1 ]; then
+	cmsTriton $GPUSERVER -n triton_server_instance -M $CMSSW_BASE/src/HeterogeneousCore/SonicTriton/data/models stop
+fi
