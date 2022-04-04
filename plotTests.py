@@ -1,6 +1,7 @@
 from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
 from collections import OrderedDict
 import numpy as np
+from scipy import stats
 import matplotlib as mpl
 mpl.use('Agg')
 import matplotlib.pyplot as plt
@@ -19,12 +20,12 @@ parser.add_argument("-n", "--numer", dest="numer", type=str, default=[], help="n
 parser.add_argument("-d", "--denom", dest="denom", type=str, default=[], help="denom(s) for ratio", nargs='*')
 parser.add_argument("-s", "--suffix", dest="suffix", type=str, default="", help="suffix for plots")
 parser.add_argument("-p","--pformats", dest="pformats", type=str, default=["png"], nargs='*', help="print plots in specified format(s)")
+parser.add_argument("-v","--verbose", dest="verbose", default=False, action="store_true", help="print data table")
 args = parser.parse_args()
 
 data = OrderedDict()
-def make_default(has_err=False):
-    default = {"threads": np.array([]), "throughput": np.array([])}
-    if has_err: default["err"] = np.array([])
+def make_default():
+    default = {"threads": np.array([]), "throughput": np.array([]), "err": np.array([])}
     return default
 with open(args.test,'r') as infile:
     for line in infile:
@@ -32,15 +33,17 @@ with open(args.test,'r') as infile:
         linesplit = line.split('\t')
         if len(linesplit)<3: continue
         type_, threads, throughput = linesplit
-        throughsplit = throughput.split(' ')
-        if len(throughsplit)>1: throughput, throughput_err = throughsplit
-        else: throughput_err = None
-        has_err = throughput_err is not None
+        throughputs = np.array([float(x) for x in throughput.split(' ')])
         if type_ not in data:
-            data[type_] = make_default(has_err)
+            data[type_] = make_default()
         data[type_]["threads"] = np.append(data[type_]["threads"], int(threads))
-        data[type_]["throughput"] = np.append(data[type_]["throughput"], float(throughput))
-        if "err" in data[type_]: data[type_]["err"] = np.append(data[type_]["err"], float(throughput_err))
+        data[type_]["throughput"] = np.append(data[type_]["throughput"], np.average(throughputs))
+        data[type_]["err"] = np.append(data[type_]["err"], stats.sem(throughputs, ddof=0))
+
+if args.verbose:
+    for key,val in data.items():
+        for thd,thp,err in zip(val["threads"],val["throughput"],val["err"]):
+            print("{}\t{}\t{:.2f}\t{:.2g}".format(key,int(thd),thp,err))
 
 unknown = []
 for req in args.numer+args.denom:
@@ -55,7 +58,7 @@ ratio_title = ""
 ratio_key = 1
 def make_ratio(numer,denom,ratios,data):
     key = (numer,denom)
-    ratios[key] = make_default("err" in data[denom])
+    ratios[key] = make_default()
     ratios[key]["threads"] = np.copy(data[denom]["threads"])
     ratios[key]["throughput"] = np.divide(data[numer]["throughput"],data[denom]["throughput"])
     ratios[key]["err"] = ratios[key]["throughput"]*np.sqrt((data[numer]["err"]/data[numer]["throughput"])**2 + (data[denom]["err"]/data[denom]["throughput"])**2)
@@ -84,7 +87,7 @@ def save_plot(fig, name, pformats):
         fig.savefig(name+"."+pformat,**fargs)
 
 xtitle = "Threads/job"
-ytitle = "Throughput [evt/s]"
+ytitle = "Throughput/job [evt/s]"
 details = "\n".join(["Nevents = 2000*threads/job","Intel(R) Xeon(R) W-2295 CPU @ 3.00GHz"])
 colors_used = OrderedDict()
 markers_used = OrderedDict()
