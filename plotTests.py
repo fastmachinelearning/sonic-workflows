@@ -22,18 +22,25 @@ parser.add_argument("-p","--pformats", dest="pformats", type=str, default=["png"
 args = parser.parse_args()
 
 data = OrderedDict()
-def make_default():
-    return {"threads": np.array([]), "throughput": np.array([])}
+def make_default(has_err=False):
+    default = {"threads": np.array([]), "throughput": np.array([])}
+    if has_err: default["err"] = np.array([])
+    return default
 with open(args.test,'r') as infile:
     for line in infile:
         line = line.rstrip()
         linesplit = line.split('\t')
         if len(linesplit)<3: continue
         type_, threads, throughput = linesplit
+        throughsplit = throughput.split(' ')
+        if len(throughsplit)>1: throughput, throughput_err = throughsplit
+        else: throughput_err = None
+        has_err = throughput_err is not None
         if type_ not in data:
-            data[type_] = make_default()
+            data[type_] = make_default(has_err)
         data[type_]["threads"] = np.append(data[type_]["threads"], int(threads))
         data[type_]["throughput"] = np.append(data[type_]["throughput"], float(throughput))
+        if "err" in data[type_]: data[type_]["err"] = np.append(data[type_]["err"], float(throughput_err))
 
 unknown = []
 for req in args.numer+args.denom:
@@ -48,9 +55,10 @@ ratio_title = ""
 ratio_key = 1
 def make_ratio(numer,denom,ratios,data):
     key = (numer,denom)
-    ratios[key] = make_default()
+    ratios[key] = make_default("err" in data[denom])
     ratios[key]["threads"] = np.copy(data[denom]["threads"])
     ratios[key]["throughput"] = np.divide(data[numer]["throughput"],data[denom]["throughput"])
+    ratios[key]["err"] = ratios[key]["throughput"]*np.sqrt((data[numer]["err"]/data[numer]["throughput"])**2 + (data[denom]["err"]/data[denom]["throughput"])**2)
 if len(args.numer)==1 and len(args.denom)==1:
     make_ratio(args.numer[0],args.denom[0],ratios,data)
     ratio_title = args.numer[0]+" / "+args.denom[0]
@@ -91,11 +99,14 @@ for plot in [data,ratios]:
             isratio = True
         else:
             label = val
-        ax.plot(plot[val]["threads"], plot[val]["throughput"], label=label, linestyle="")
+        container = ax.errorbar(plot[val]["threads"], plot[val]["throughput"], yerr = plot[val]["err"] if len(plot[val]["err"])>0 else None, label=label, linestyle="")
         line = ax.get_lines()[-1]
         if isratio:
             line.set_color(colors_used[val[ratio_key]])
             line.set_marker(markers_used[val[ratio_key]])
+            # set error bar color
+            _, _, (vertical_lines,) = container.lines
+            vertical_lines.set_color(colors_used[val[ratio_key]])
         else:
             colors_used[val] = line.get_color()
             markers_used[val] = line.get_marker()
