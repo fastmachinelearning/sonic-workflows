@@ -1,7 +1,7 @@
 #!/bin/bash -ex
 
 # fully loaded configuration: 3, 6, 18 threads
-for NTH in 3 6 18; do
+for NTH in 1 3 6 18; do
 	./testCPU.sh -t testDirect_th${NTH} -n ${NTH} -j $((18/NTH))
 	./testCPU.sh -t testSonic_th${NTH} -n ${NTH} -j $((18/NTH)) -s
 	./testCPU.sh -t testSonicOne_th${NTH} -n ${NTH} -j $((18/NTH)) -s -m
