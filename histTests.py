@@ -18,6 +18,7 @@ mpl.rcParams['axes.prop_cycle'] = mpl.cycler(color=colors)+mpl.cycler(marker=mar
 parser = ArgumentParser(formatter_class=ArgumentDefaultsHelpFormatter)
 parser.add_argument("-t", "--test", dest="test", type=str, help="txt file w/ results from anaTests.sh", required=True)
 parser.add_argument("-T", "--threads", dest="threads", type=int, help="threads/job value", required=True)
+parser.add_argument("-n", "--nbins", dest="nbins", type=int, default = 0, help="number of bins (default: npts/2)")
 parser.add_argument("-s", "--suffix", dest="suffix", type=str, default="", help="suffix for plots")
 parser.add_argument("-p","--pformats", dest="pformats", type=str, default=["png"], nargs='*', help="print plots in specified format(s)")
 args = parser.parse_args()
@@ -50,7 +51,7 @@ xtitle = "Throughput/job [evt/s]"
 details = "\n".join(["Nevents = 2000*threads/job; threads/job = {}".format(args.threads),"Intel(R) Xeon(R) W-2295 CPU @ 3.00GHz"])
 
 # create histograms
-nbins = npts/2
+nbins = npts/2 if args.nbins==0 else args.nbins
 bins = np.linspace(xmin, xmax, nbins)
 fig, ax = plt.subplots()
 for key,val in data.items():
