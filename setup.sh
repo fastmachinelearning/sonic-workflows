@@ -3,10 +3,9 @@
 ACCESS=ssh
 CORES=8
 BATCH=""
-CMSSWVER=CMSSW_12_0_0_pre5
+CMSSWVER=CMSSW_12_4_0_pre2
 CMSSWVERS=(
-CMSSW_12_0_0_pre4 \
-CMSSW_12_0_0_pre5 \
+CMSSW_12_4_0_pre2 \
 )
 
 usage(){
@@ -58,15 +57,21 @@ if [[ ! " ${CMSSWVERS[@]} " =~ " $CMSSWVER " ]]; then
 	usage 1
 fi
 
-export SCRAM_ARCH=slc7_amd64_gcc900
+export SCRAM_ARCH=slc7_amd64_gcc10
 scram project $CMSSWVER
 cd ${CMSSWVER}/src
 eval `scramv1 runtime -sh`
+git clone ${ACCESS_GITHUB}fastmachinelearning/sonic-workflows -b ragged
+cd ${CMSSW_BASE}
+mkdir build && cd build
+cp ${CMSSW_BASE}/src/sonic-workflows/triton.tar.gz
+tar -xzf triton.tar.gz
+cp${CMSSW_BASE}/src/sonic-workflows/triton-inference-client.xml $CMSSW_BASE/config/toolbox/$SCRAM_ARCH/tools/selected/
+cd ${CMSSW_BASE}/src
+scram setup triton-inference-client
 git cms-init $ACCESS_CMSSW $BATCH
-git cms-checkout-topic $ACCESS_CMSSW fastmachinelearning:${CMSSWVER}_SONIC
+git cms-checkout-topic $ACCESS_CMSSW kpedro88:TritonRaggedBatching
+scram b checkdeps
 git cms-addpkg HeterogeneousCore/SonicTriton
-git clone ${ACCESS_GITHUB}fastmachinelearning/sonic-models HeterogeneousCore/SonicTriton/data
-git cms-addpkg RecoBTag/Combined
-git clone ${ACCESS_GITHUB}fastmachinelearning/RecoBTag-Combined -b add_noragged RecoBTag/Combined/data
-git clone ${ACCESS_GITHUB}fastmachinelearning/sonic-workflows
+git clone ${ACCESS_GITHUB}kpedro88/HeterogeneousCore-SonicTriton HeterogeneousCore/SonicTriton/data
 scram b -j ${CORES}
