@@ -61,17 +61,21 @@ export SCRAM_ARCH=slc7_amd64_gcc10
 scram project $CMSSWVER
 cd ${CMSSWVER}/src
 eval `scramv1 runtime -sh`
+git cms-init $ACCESS_CMSSW $BATCH
 git clone ${ACCESS_GITHUB}fastmachinelearning/sonic-workflows -b ragged
+
+# use updated triton external
 cd ${CMSSW_BASE}
 mkdir build && cd build
-cp ${CMSSW_BASE}/src/sonic-workflows/triton.tar.gz
+cp ${CMSSW_BASE}/src/sonic-workflows/triton.tar.gz .
 tar -xzf triton.tar.gz
-cp${CMSSW_BASE}/src/sonic-workflows/triton-inference-client.xml $CMSSW_BASE/config/toolbox/$SCRAM_ARCH/tools/selected/
+cp ${CMSSW_BASE}/src/sonic-workflows/triton-inference-client.xml $CMSSW_BASE/config/toolbox/$SCRAM_ARCH/tools/selected/
+
+# get packages and build
 cd ${CMSSW_BASE}/src
 scram setup triton-inference-client
-git cms-init $ACCESS_CMSSW $BATCH
 git cms-checkout-topic $ACCESS_CMSSW kpedro88:TritonRaggedBatching
 scram b checkdeps
 git cms-addpkg HeterogeneousCore/SonicTriton
-git clone ${ACCESS_GITHUB}kpedro88/HeterogeneousCore-SonicTriton HeterogeneousCore/SonicTriton/data
+git clone ${ACCESS_GITHUB}kpedro88/HeterogeneousCore-SonicTriton -b ragged HeterogeneousCore/SonicTriton/data
 scram b -j ${CORES}
