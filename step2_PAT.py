@@ -31,9 +31,9 @@ process.maxEvents = cms.untracked.PSet(
 # Input source
 process.source = cms.Source("PoolSource",
     fileNames = cms.untracked.vstring(
-        '/store/relval/CMSSW_10_6_4/RelValProdTTbar_13_pmx25ns/AODSIM/PUpmx25ns_106X_upgrade2018_realistic_v9-v1/10000/4440FA53-897B-9A4B-AD76-D1337B591A2F.root',
-        '/store/relval/CMSSW_10_6_4/RelValProdTTbar_13_pmx25ns/AODSIM/PUpmx25ns_106X_upgrade2018_realistic_v9-v1/10000/457C377A-809A-1947-A600-27720ED415FB.root',
-        '/store/relval/CMSSW_10_6_4/RelValProdTTbar_13_pmx25ns/AODSIM/PUpmx25ns_106X_upgrade2018_realistic_v9-v1/10000/655A4F07-F40C-324A-8EC0-B19A7F03893F.root'
+        'root://eoscms.cern.ch//store/user/cmsbuild/store/relval/CMSSW_10_6_4/RelValProdTTbar_13_pmx25ns/AODSIM/PUpmx25ns_106X_upgrade2018_realistic_v9-v1/10000/4440FA53-897B-9A4B-AD76-D1337B591A2F.root',
+        'root://eoscms.cern.ch//store/user/cmsbuild/store/relval/CMSSW_10_6_4/RelValProdTTbar_13_pmx25ns/AODSIM/PUpmx25ns_106X_upgrade2018_realistic_v9-v1/10000/457C377A-809A-1947-A600-27720ED415FB.root',
+        'root://eoscms.cern.ch//store/user/cmsbuild/store/relval/CMSSW_10_6_4/RelValProdTTbar_13_pmx25ns/AODSIM/PUpmx25ns_106X_upgrade2018_realistic_v9-v1/10000/655A4F07-F40C-324A-8EC0-B19A7F03893F.root'
     ),
     secondaryFileNames = cms.untracked.vstring()
 )
@@ -43,6 +43,7 @@ process.options = cms.untracked.PSet(
     IgnoreCompletely = cms.untracked.vstring(),
     Rethrow = cms.untracked.vstring(),
     SkipEvent = cms.untracked.vstring(),
+    accelerators = cms.untracked.vstring('*'),
     allowUnscheduled = cms.obsolete.untracked.bool,
     canDeleteEarly = cms.untracked.vstring(),
     deleteNonConsumedUnscheduledModules = cms.untracked.bool(True),
