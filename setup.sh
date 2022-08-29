@@ -62,7 +62,7 @@ scram project $CMSSWVER
 cd ${CMSSWVER}/src
 eval `scramv1 runtime -sh`
 git cms-init $ACCESS_CMSSW $BATCH
-git clone ${ACCESS_GITHUB}fastmachinelearning/sonic-workflows -b ragged
+git clone ${ACCESS_GITHUB}fastmachinelearning/sonic-workflows -b ragged_124X
 
 # use updated triton external
 cd ${CMSSW_BASE}
