@@ -3,9 +3,9 @@
 ACCESS=ssh
 CORES=8
 BATCH=""
-CMSSWVER=CMSSW_12_4_0_pre2
+CMSSWVER=CMSSW_12_5_0_pre4
 CMSSWVERS=(
-CMSSW_12_4_0_pre2 \
+CMSSW_12_5_0_pre4 \
 )
 
 usage(){
@@ -57,7 +57,14 @@ if [[ ! " ${CMSSWVERS[@]} " =~ " $CMSSWVER " ]]; then
 	usage 1
 fi
 
-export SCRAM_ARCH=slc7_amd64_gcc10
+# check OS version
+CURR_OS=$(grep -o "[0-9]*\\.[0-9]*" /etc/redhat-release | cut -d'.' -f1)
+if [ "$CURR_OS" -ne 8 ]; then
+	cmssw-el8 --nv -- $0 $@
+	exit $?
+fi
+
+export SCRAM_ARCH=el8_amd64_gcc10
 scram project $CMSSWVER
 cd ${CMSSWVER}/src
 eval `scramv1 runtime -sh`
@@ -74,7 +81,7 @@ cp ${CMSSW_BASE}/src/sonic-workflows/triton-inference-client.xml $CMSSW_BASE/con
 # get packages and build
 cd ${CMSSW_BASE}/src
 scram setup triton-inference-client
-git cms-checkout-topic $ACCESS_CMSSW kpedro88:TritonRaggedBatching
+git cms-checkout-topic $ACCESS_CMSSW kpedro88:TritonRaggedBatching125X
 scram b checkdeps
 git cms-addpkg HeterogeneousCore/SonicTriton
 git clone ${ACCESS_GITHUB}kpedro88/HeterogeneousCore-SonicTriton -b ragged HeterogeneousCore/SonicTriton/data

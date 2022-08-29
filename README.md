@@ -3,11 +3,18 @@
 This repository serves to deploy and run SONIC workflows for performance tests.
 
 ## Setup
+The setup commands only need to be run once.
 ```bash
 wget https://raw.githubusercontent.com/fastmachinelearning/sonic-workflows/ragged/setup.sh
 chmod +x setup.sh
 ./setup.sh
-cd CMSSW_12_4_0_pre2/src/sonic-workflows
+```
+
+## Environment
+The environment commands should be executed every time.
+```
+cmssw-el8 --nv
+cd CMSSW_12_5_0_pre4/src/sonic-workflows
 cmsenv
 ```
 
