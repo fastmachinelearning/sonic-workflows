@@ -76,6 +76,7 @@ cd ${CMSSW_BASE}
 mkdir build && cd build
 cp ${CMSSW_BASE}/src/sonic-workflows/triton.tar.gz .
 tar -xzf triton.tar.gz
+rm triton.tar.gz
 cp ${CMSSW_BASE}/src/sonic-workflows/triton-inference-client.xml $CMSSW_BASE/config/toolbox/$SCRAM_ARCH/tools/selected/
 
 # get packages and build
