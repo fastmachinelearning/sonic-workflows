@@ -93,7 +93,7 @@ for producer in process._Process__producers.values():
     if hasattr(producer,'Client'):
         if hasattr(producer.Client,'verbose'):
             producer.Client.verbose = options.verbose
-            keepMsgs.extend([producer._TypedParameterizable__type,producer._TypedParameterizable__type+":TritonClient"])
+            keepMsgs.extend([producer.label(),producer.label()+":TritonClient"])
         if hasattr(producer.Client,'compression'):
             producer.Client.compression = options.compression
         if hasattr(producer.Client,'useSharedMemory'):
@@ -101,7 +101,7 @@ for producer in process._Process__producers.values():
 
 if options.verbose:
     process.load('FWCore/MessageService/MessageLogger_cfi')
-    process.MessageLogger.cerr.FwkReport.reportEvery = 500
+    process.MessageLogger.cerr.FwkReport.reportEvery = 1
     for msg in keepMsgs:
         setattr(process.MessageLogger.cerr,msg,
             cms.untracked.PSet(
