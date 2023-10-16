@@ -48,3 +48,32 @@ cmsDriver.py step4  -s PAT --conditions auto:phase1_2021_realistic --datatier MI
 ```
 
 Run3/Phase2 SONIC-enabled workflows are available from `runTheMatrix.py -w upgrade -n` with suffix `.9001`
+
+
+## Production workflow for Purdue October 16
+
+This version
+* Reverts to a 2017 MiniAOD workflow, which contains particlenet (which is not included in the workflow below).  DeepMET, ParticleNet, and ECAL DRN
+* Includes Simon's updates to the DRN for determinism
+* Should work on GPU-enabled nodes at Purdue in slurm interaction job with limited number of threads
+* Currently, files run on are from cms:/store/mc/RunIISummer20UL17RECO/TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8/AODSIM and have been copied to T2_IT_Pisa.  These could be replaced with files that we copy somwehere ourselves.
+
+The setup instructions:
+First, do standard CMS setup:
+```
+source /cvmfs/cms.cern.ch/cmsset_default.sh
+```
+You'll also need to initialize your grid proxy: voms-proxy-init --rfc --voms cms -valid 192:00
+
+Now we pull a recent cmssw release.  Eventually, we would like this to be CMSSW_13_3_0_pre4, but for now
+```
+cmsrel CMSSW_13_3_X_2023-10-13-1100
+cd CMSSW_13_3_X_2023-10-13-1100/src
+cmsenv
+git cms-init
+```
+Then clone this repo.
+In the cloned directory, you can run with something like:
+```
+cmsRun run_workflow.py maxEvents=100 device="cpu"
+```
