@@ -2,13 +2,13 @@
 # using: 
 # Revision: 1.19 
 # Source: /local/reps/CMSSW/CMSSW/Configuration/Applications/python/ConfigBuilder.py,v 
-# with command line options: step2 -s PAT --era Run2_2018 -n 100 --process PAT --conditions auto:phase1_2018_realistic --mc --scenario pp --eventcontent MINIAODSIM --datatier MINIAODSIM --procModifiers run2_miniAOD_UL_preSummer20 --no_exec --filein filelist:step1_dasquery.log --fileout file:step2.root
+# with command line options: step2 -s PAT --era Run2_2017 -n 100 --process PAT --conditions auto:phase1_2017_realistic --mc --scenario pp --eventcontent MINIAODSIM --datatier MINIAODSIM --procModifiers run2_miniAOD_UL_preSummer20 --no_exec --filein filelist:step1_dasquery_truncated.log --fileout file:step2.root
 import FWCore.ParameterSet.Config as cms
 
-from Configuration.Eras.Era_Run2_2018_cff import Run2_2018
+from Configuration.Eras.Era_Run2_2017_cff import Run2_2017
 from Configuration.ProcessModifiers.run2_miniAOD_UL_preSummer20_cff import run2_miniAOD_UL_preSummer20
 
-process = cms.Process('PAT',Run2_2018,run2_miniAOD_UL_preSummer20)
+process = cms.Process('PAT',Run2_2017,run2_miniAOD_UL_preSummer20)
 
 # import of standard configurations
 process.load('Configuration.StandardSequences.Services_cff')
@@ -31,18 +31,18 @@ process.maxEvents = cms.untracked.PSet(
 # Input source
 process.source = cms.Source("PoolSource",
     fileNames = cms.untracked.vstring(
-        '/store/relval/CMSSW_10_6_4/RelValProdTTbar_13_pmx25ns/AODSIM/PUpmx25ns_106X_upgrade2018_realistic_v9-v1/10000/4440FA53-897B-9A4B-AD76-D1337B591A2F.root',
-        '/store/relval/CMSSW_10_6_4/RelValProdTTbar_13_pmx25ns/AODSIM/PUpmx25ns_106X_upgrade2018_realistic_v9-v1/10000/457C377A-809A-1947-A600-27720ED415FB.root',
-        '/store/relval/CMSSW_10_6_4/RelValProdTTbar_13_pmx25ns/AODSIM/PUpmx25ns_106X_upgrade2018_realistic_v9-v1/10000/655A4F07-F40C-324A-8EC0-B19A7F03893F.root'
+        '/store/mc/RunIISummer20UL17RECO/TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8/AODSIM/106X_mc2017_realistic_v6-v2/230000/009E7EE3-3781-5048-A2F2-0E6139B13D46.root',
+        '/store/mc/RunIISummer20UL17RECO/TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8/AODSIM/106X_mc2017_realistic_v6-v2/230000/015001B3-E5DC-154C-BE7C-CBEB4D2D5291.root',
+        '/store/mc/RunIISummer20UL17RECO/TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8/AODSIM/106X_mc2017_realistic_v6-v2/230000/01918540-2DED-A54F-A3C4-C98845FB0C48.root'
     ),
     secondaryFileNames = cms.untracked.vstring()
 )
 
 process.options = cms.untracked.PSet(
-    FailPath = cms.untracked.vstring(),
     IgnoreCompletely = cms.untracked.vstring(),
     Rethrow = cms.untracked.vstring(),
-    SkipEvent = cms.untracked.vstring(),
+    TryToContinue = cms.untracked.vstring(),
+    accelerators = cms.untracked.vstring('*'),
     allowUnscheduled = cms.obsolete.untracked.bool,
     canDeleteEarly = cms.untracked.vstring(),
     deleteNonConsumedUnscheduledModules = cms.untracked.bool(True),
@@ -56,7 +56,10 @@ process.options = cms.untracked.PSet(
     ),
     fileMode = cms.untracked.string('FULLMERGE'),
     forceEventSetupCacheClearOnNewRun = cms.untracked.bool(False),
+    holdsReferencesToDeleteEarly = cms.untracked.VPSet(),
     makeTriggerResults = cms.obsolete.untracked.bool,
+    modulesToCallForTryToContinue = cms.untracked.vstring(),
+    modulesToIgnoreForDeleteEarly = cms.untracked.vstring(),
     numberOfConcurrentLuminosityBlocks = cms.untracked.uint32(0),
     numberOfConcurrentRuns = cms.untracked.uint32(1),
     numberOfStreams = cms.untracked.uint32(0),
@@ -150,7 +153,7 @@ process.MINIAODSIMoutput = cms.OutputModule("PoolOutputModule",
 
 # Other statements
 from Configuration.AlCa.GlobalTag import GlobalTag
-process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:phase1_2018_realistic', '')
+process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:phase1_2017_realistic', '')
 
 # Path and EndPath definitions
 process.Flag_BadChargedCandidateFilter = cms.Path(process.BadChargedCandidateFilter)
