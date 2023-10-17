@@ -18,6 +18,18 @@ Notes:
   * includes update to DRN for determinism
 * Input AODSIM files currently hosted at T2_IT_Pisa
 
+## Purdue resources
+
+Interactive CPU job:
+```
+sinteractive --account=cms --partition=hammer-g -N 1 -n1 -c4 --mem-per-cpu=2G
+```
+
+Interactive GPU job:
+```
+sinteractive --account=cms --partition=hammer-f --gres=gpu:1 -N 1 -n1 -c4 --mem-per-cpu=2G
+```
+
 ## Running
 
 To see the available options:
