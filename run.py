@@ -72,7 +72,7 @@ if options.sonic:
     process.TritonService.verbose = options.verbose
     process.TritonService.fallback.verbose = options.verbose
     process.TritonService.fallback.useDocker = options.docker
-    process.TritonService.fallback.imageName = "fastml/triton-torchgeo:23.04-PT-py3-geometric"
+    process.TritonService.fallback.imageName = "fastml/triton-torchgeo:23.09-py3-geometric"
     if options.device != "auto":
         process.TritonService.fallback.useGPU = options.device=="gpu"
     if len(options.address)>0:
