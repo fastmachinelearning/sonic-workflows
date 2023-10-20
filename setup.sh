@@ -3,9 +3,8 @@
 ACCESS=ssh
 CORES=8
 BATCH=""
-CMSSWVER=CMSSW_13_3_X_2023-10-13-1100
+CMSSWVER=CMSSW_13_3_0_pre4
 CMSSWVERS=(
-CMSSW_13_3_X_2023-10-13-1100 \
 CMSSW_13_3_0_pre4 \
 )
 
@@ -85,10 +84,7 @@ else
 	fi
 fi
 
-declare -A GCC_VERSION
-GCC_VERSION[slc7]=gcc11
-GCC_VERSION[el8]=gcc12
-export SCRAM_ARCH=${SLC_VERSION}_amd64_${GCC_VERSION[$SLC_VERSION]}
+export SCRAM_ARCH=${SLC_VERSION}_amd64_gcc12
 scram project $CMSSWVER
 cd ${CMSSWVER}/src
 eval `scramv1 runtime -sh`
