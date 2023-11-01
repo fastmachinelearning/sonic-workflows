@@ -97,13 +97,12 @@ mkdir RecoTauTag/TrainingFiles
 git clone ${ACCESS_GITHUB}wpmccormack/RecoBTag-Combined.git -b onnx_patch_with_newPN_HiggsIN RecoBTag/Combined/data
 git clone ${ACCESS_GITHUB}yongbinfeng/RecoTauTag-TrainingFiles.git -b DeepTau2018v2p5_SONIC RecoTauTag/TrainingFiles/data
 git clone ${ACCESS_GITHUB}fastmachinelearning/sonic-workflows -b CMSSW_13_3_X
-SRCDIR=`pwd`
 cd Configuration/ProcessModifiers/python/
 rm allSonicTriton_cff.py
 wget https://raw.githubusercontent.com/cms-tau-pog/cmssw/CMSSW_13_3_X_tau-pog_deepTauv2p5_SONIC/Configuration/ProcessModifiers/python/allSonicTriton_cff.py
-cd ${SRCDIR}
+cd ${CMSSW_BASE}/src
 cd RecoTauTag/RecoTau/python/tools/
 rm runTauIdMVA.py
 wget https://raw.githubusercontent.com/cms-tau-pog/cmssw/CMSSW_13_3_X_tau-pog_deepTauv2p5_SONIC/RecoTauTag/RecoTau/python/tools/runTauIdMVA.py
-cd ${SRCDIR}
+cd ${CMSSW_BASE}/src
 scram b -j ${CORES}
