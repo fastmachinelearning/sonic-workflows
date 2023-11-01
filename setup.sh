@@ -89,9 +89,9 @@ scram project $CMSSWVER
 cd ${CMSSWVER}/src
 eval `scramv1 runtime -sh`
 git cms-init $ACCESS_CMSSW $BATCH
-git cms-merge-topic fastmachinelearning:CMSSW_13_3_0_pre4_PTTC
-git cms-merge-topic wpmccormack:CMSSW_13_3_0_pre4_new_PN_and_HiggsIN
-git cms-merge-topic yongbinfeng:CMSSW_13_3_0_pre3_DeepTauIdSONIC
+git cms-merge-topic -u fastmachinelearning:CMSSW_13_3_0_pre4_PTTC
+git cms-merge-topic -u wpmccormack:CMSSW_13_3_0_pre4_new_PN_and_HiggsIN
+git cms-merge-topic -u yongbinfeng:CMSSW_13_3_0_pre3_DeepTauIdSONIC
 git cms-addpkg RecoBTag/Combined
 mkdir RecoTauTag/TrainingFiles
 git clone ${ACCESS_GITHUB}wpmccormack/RecoBTag-Combined.git -b onnx_patch_with_newPN_HiggsIN RecoBTag/Combined/data
