@@ -90,7 +90,20 @@ cd ${CMSSWVER}/src
 eval `scramv1 runtime -sh`
 git cms-init $ACCESS_CMSSW $BATCH
 git cms-merge-topic fastmachinelearning:CMSSW_13_3_0_pre4_PTTC
+git cms-merge-topic wpmccormack:CMSSW_13_3_0_pre4_new_PN_and_HiggsIN
+git cms-merge-topic yongbinfeng:CMSSW_13_3_0_pre3_DeepTauIdSONIC
 git cms-addpkg RecoBTag/Combined
-git clone ${ACCESS_GITHUB}fastmachinelearning/RecoBTag-Combined -b onnx_patch RecoBTag/Combined/data
+mkdir RecoTauTag/TrainingFiles
+git clone ${ACCESS_GITHUB}wpmccormack/RecoBTag-Combined.git -b onnx_patch_with_newPN_HiggsIN RecoBTag/Combined/data
+git clone ${ACCESS_GITHUB}yongbinfeng/RecoTauTag-TrainingFiles.git -b DeepTau2018v2p5_SONIC RecoTauTag/TrainingFiles/data
 git clone ${ACCESS_GITHUB}fastmachinelearning/sonic-workflows -b CMSSW_13_3_X
+SRCDIR=`pwd`
+cd Configuration/ProcessModifiers/python/
+rm allSonicTriton_cff.py
+wget https://raw.githubusercontent.com/cms-tau-pog/cmssw/CMSSW_13_3_X_tau-pog_deepTauv2p5_SONIC/Configuration/ProcessModifiers/python/allSonicTriton_cff.py
+cd ${SRCDIR}
+cd RecoTauTag/RecoTau/python/tools/
+rm runTauIdMVA.py
+wget https://raw.githubusercontent.com/cms-tau-pog/cmssw/CMSSW_13_3_X_tau-pog_deepTauv2p5_SONIC/RecoTauTag/RecoTau/python/tools/runTauIdMVA.py
+cd ${SRCDIR}
 scram b -j ${CORES}
