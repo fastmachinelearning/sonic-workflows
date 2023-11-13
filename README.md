@@ -8,16 +8,13 @@ source /cvmfs/cms.cern.ch/cmsset_default.sh
 wget https://raw.githubusercontent.com/fastmachinelearning/sonic-workflows/CMSSW_13_3_X/setup.sh
 chmod +x setup.sh
 ./setup.sh
-source /cvmfs/cms.cern.ch/cmsset_default.sh
 voms-proxy-init --rfc --voms cms -valid 192:00
-cd CMSSW_13_3_X_2023-10-13-1100/src/sonic-workflows
+cd CMSSW_13_3_0_pre4/src/sonic-workflows
 cmsenv
 ```
 
 Notes:
-* Using an IB release until CMSSW_13_3_0_pre4 is out
-  * includes update to DRN for determinism
-* Input AODSIM files currently hosted at T2_IT_Pisa
+* Input AODSIM files currently hosted at Purdue
 
 ## Purdue resources
 
