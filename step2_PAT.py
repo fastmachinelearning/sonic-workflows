@@ -31,9 +31,9 @@ process.maxEvents = cms.untracked.PSet(
 # Input source
 process.source = cms.Source("PoolSource",
     fileNames = cms.untracked.vstring(
-        '/store/mc/RunIISummer20UL17RECO/TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8/AODSIM/106X_mc2017_realistic_v6-v2/230000/009E7EE3-3781-5048-A2F2-0E6139B13D46.root',
-        '/store/mc/RunIISummer20UL17RECO/TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8/AODSIM/106X_mc2017_realistic_v6-v2/230000/015001B3-E5DC-154C-BE7C-CBEB4D2D5291.root',
-        '/store/mc/RunIISummer20UL17RECO/TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8/AODSIM/106X_mc2017_realistic_v6-v2/230000/01918540-2DED-A54F-A3C4-C98845FB0C48.root'
+        'root://eos.cms.rcac.purdue.edu//store/mc/RunIISummer20UL17RECO/TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8/AODSIM/106X_mc2017_realistic_v6-v2/230000/009E7EE3-3781-5048-A2F2-0E6139B13D46.root',
+        'root://eos.cms.rcac.purdue.edu//store/mc/RunIISummer20UL17RECO/TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8/AODSIM/106X_mc2017_realistic_v6-v2/230000/015001B3-E5DC-154C-BE7C-CBEB4D2D5291.root',
+        'root://eos.cms.rcac.purdue.edu//store/mc/RunIISummer20UL17RECO/TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8/AODSIM/106X_mc2017_realistic_v6-v2/230000/01918540-2DED-A54F-A3C4-C98845FB0C48.root'
     ),
     secondaryFileNames = cms.untracked.vstring()
 )
