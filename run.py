@@ -50,7 +50,7 @@ if options.device not in allowed_devices:
 # activate modifiers
 modifier_names = []
 if options.sonic:
-    modifier_names = ["allSonicTriton","photonDRN"]
+    modifier_names = ["allSonicTriton"]
 modifier_names = modifier_names+[x for x in options.modifiers]
 modifiers = []
 for modifier in modifier_names:
