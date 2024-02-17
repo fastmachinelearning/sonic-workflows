@@ -3,9 +3,9 @@
 ACCESS=ssh
 CORES=8
 BATCH=""
-CMSSWVER=CMSSW_13_3_0_pre4
+CMSSWVER=CMSSW_14_1_0_pre0
 CMSSWVERS=(
-CMSSW_13_3_0_pre4 \
+CMSSW_14_1_0_pre0 \
 )
 
 usage(){
@@ -64,7 +64,7 @@ OS_PREFIX[7]=slc7
 OS_PREFIX[8]=el8
 POSSIBLE_VERSIONS=( 7 8 )
 if [[ -f "/etc/redhat-release" ]]; then
-	VERSION_TMP=`awk -F'[ .]' '{print $4}' "/etc/redhat-release"`
+	VERSION_TMP=$(grep -o "[0-9]\+\." /etc/redhat-release | cut -d'.' -f1)
 	if [[ "${POSSIBLE_VERSIONS[@]} " =~ "${VERSION_TMP}" ]]; then
 		SLC_VERSION="${OS_PREFIX[${VERSION_TMP}]}"
 	else
@@ -89,13 +89,7 @@ scram project $CMSSWVER
 cd ${CMSSWVER}/src
 eval `scramv1 runtime -sh`
 git cms-init $ACCESS_CMSSW $BATCH
-git cms-merge-topic -u fastmachinelearning:CMSSW_13_3_0_pre4_PTTC
-git cms-merge-topic -u wpmccormack:CMSSW_13_3_0_pre4_new_PN_and_HiggsIN
-git cms-merge-topic -u yongbinfeng:CMSSW_13_3_0_pre3_DeepTauIdSONIC_fixPY
-git cms-addpkg RecoBTag/Combined
-mkdir RecoTauTag/TrainingFiles
-git clone ${ACCESS_GITHUB}wpmccormack/RecoBTag-Combined.git -b onnx_patch_with_newPN_HiggsIN RecoBTag/Combined/data
-git clone ${ACCESS_GITHUB}yongbinfeng/RecoTauTag-TrainingFiles.git -b DeepTau2018v2p5_SONIC RecoTauTag/TrainingFiles/data
-git clone ${ACCESS_GITHUB}fastmachinelearning/sonic-workflows -b CMSSW_13_3_X
+git cms-merge-topic -u fastmachinelearning:CMSSW_14_1_0_pre0_PTTC
+git clone ${ACCESS_GITHUB}fastmachinelearning/sonic-workflows -b CMSSW_14_1_X
 cd ${CMSSW_BASE}/src
 scram b -j ${CORES}

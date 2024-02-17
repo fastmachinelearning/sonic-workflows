@@ -5,11 +5,11 @@ This repository serves to deploy and run SONIC workflows for performance tests.
 ## Setup
 ```bash
 source /cvmfs/cms.cern.ch/cmsset_default.sh
-wget https://raw.githubusercontent.com/fastmachinelearning/sonic-workflows/CMSSW_13_3_X/setup.sh
+wget https://raw.githubusercontent.com/fastmachinelearning/sonic-workflows/CMSSW_14_1_X/setup.sh
 chmod +x setup.sh
 ./setup.sh
 voms-proxy-init --rfc --voms cms -valid 192:00
-cd CMSSW_13_3_0_pre4/src/sonic-workflows
+cd CMSSW_14_1_0_pre0/src/sonic-workflows
 cmsenv
 ```
 
