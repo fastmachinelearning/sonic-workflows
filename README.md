@@ -37,7 +37,7 @@ cmsRun run.py --help
 
 To run a workflow with the default settings:
 ```bash
-cmsRun run.py maxEvents=100
+cmsRun run.py --maxEvents 100
 ```
 
 ## Driver commands

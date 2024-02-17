@@ -1,6 +1,7 @@
 import FWCore.ParameterSet.Config as cms
 from FWCore.ParameterSet.VarParsing import VarParsing
 import sys
+from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
 
 # helper
 def import_obj(src,obj):
@@ -10,26 +11,31 @@ def import_obj(src,obj):
 allowed_compression = ["none","deflate","gzip"]
 allowed_devices = ["auto","cpu","gpu"]
 
-options = VarParsing()
-options.register("config", "step2_PAT", VarParsing.multiplicity.singleton, VarParsing.varType.string, "cmsDriver-generated config to import")
-options.register("maxEvents", -1, VarParsing.multiplicity.singleton, VarParsing.varType.int, "Number of events to process (-1 for all)")
-options.register("sonic", True, VarParsing.multiplicity.singleton, VarParsing.varType.bool, "enable SONIC in workflow")
-options.register("serverName", "default", VarParsing.multiplicity.singleton, VarParsing.varType.string, "name for server (used internally)")
-options.register("address", "", VarParsing.multiplicity.singleton, VarParsing.varType.string, "server address")
-options.register("port", 8001, VarParsing.multiplicity.singleton, VarParsing.varType.int, "server port")
-options.register("params", "", VarParsing.multiplicity.singleton, VarParsing.varType.string, "json file containing server address/port")
-options.register("threads", 1, VarParsing.multiplicity.singleton, VarParsing.varType.int, "number of threads")
-options.register("streams", 0, VarParsing.multiplicity.singleton, VarParsing.varType.int, "number of streams")
-options.register("verbose", False, VarParsing.multiplicity.singleton, VarParsing.varType.bool, "enable verbose output")
-options.register("shm", True, VarParsing.multiplicity.singleton, VarParsing.varType.bool, "enable shared memory")
-options.register("compression", "", VarParsing.multiplicity.singleton, VarParsing.varType.string, "enable I/O compression (choices: {})".format(', '.join(allowed_compression)))
-options.register("ssl", False, VarParsing.multiplicity.singleton, VarParsing.varType.bool, "enable SSL authentication for server communication")
-options.register("device","auto", VarParsing.multiplicity.singleton, VarParsing.varType.string, "specify device for fallback server (choices: {})".format(', '.join(allowed_devices)))
-options.register("docker", False, VarParsing.multiplicity.singleton, VarParsing.varType.bool, "use Docker for fallback server")
-options.register("modifiers", "", VarParsing.multiplicity.list, VarParsing.varType.string, "additional process modifiers")
-options.register("tmi", False, VarParsing.multiplicity.singleton, VarParsing.varType.bool, "include time/memory summary")
-options.register("dump", False, VarParsing.multiplicity.singleton, VarParsing.varType.bool, "dump process python config")
-options.parseArguments()
+parser = ArgumentParser(formatter_class=ArgumentDefaultsHelpFormatter)
+parser.add_argument("--config", default="step2_PAT", type=str, help="cmsDriver-generated config to import")
+parser.add_argument("--maxEvents", default=-1, type=int, help="Number of events to process (-1 for all)")
+parser.add_argument("--noSonic", default=False, action="store_true", help="disable SONIC in workflow")
+parser.add_argument("--serverName", default="default", type=str, help="name for server (used internally)")
+parser.add_argument("--address", default="", type=str, help="server address")
+parser.add_argument("--port", default=8001, type=int, help="server port")
+parser.add_argument("--params", default="", type=str, help="json file containing server address/port")
+parser.add_argument("--threads", default=1, type=int, help="number of threads")
+parser.add_argument("--streams", default=0, type=int, help="number of streams")
+parser.add_argument("--verbose", default=False, action="store_true", help="enable all verbose output")
+parser.add_argument("--verboseClient", default=False, action="store_true", help="enable verbose output for clients")
+parser.add_argument("--verboseServer", default=False, action="store_true", help="enable verbose output for server")
+parser.add_argument("--verboseService", default=False, action="store_true", help="enable verbose output for TritonService")
+parser.add_argument("--noShm", default=False, action="store_true", help="disable shared memory")
+parser.add_argument("--compression", default="", type=str, choices=allowed_compression, help="enable I/O compression")
+parser.add_argument("--ssl", default=False, action="store_true", help="enable SSL authentication for server communication")
+parser.add_argument("--device", default="auto", type=str, choices=allowed_devices, help="specify device for fallback server")
+parser.add_argument("--docker", default=False, action="store_true", help="use Docker for fallback server")
+parser.add_argument("--modifiers", default="", nargs='*', type=str, help="additional process modifiers")
+parser.add_argument("--tmi", default=False, action="store_true", help="include time/memory summary")
+options = parser.parse_args()
+
+options.sonic = not options.noSonic
+options.shm = not options.noShm
 
 if len(options.params)>0:
     with open(options.params,'r') as pfile:
@@ -37,15 +43,6 @@ if len(options.params)>0:
     options.address = pdict["address"]
     options.port = int(pdict["port"])
     print("server = "+options.address+":"+str(options.port))
-
-# check compression
-if len(options.compression)>0 and options.compression not in allowed_compression:
-    raise ValueError("Unknown compression setting: {}".format(options.compression))
-
-# check devices
-options.device = options.device.lower()
-if options.device not in allowed_devices:
-    raise ValueError("Unknown device: {}".format(options.device))
 
 # activate modifiers
 modifier_names = []
@@ -69,8 +66,8 @@ if options.threads>0:
 process.maxEvents.input = cms.untracked.int32(options.maxEvents)
 
 if options.sonic:
-    process.TritonService.verbose = options.verbose
-    process.TritonService.fallback.verbose = options.verbose
+    process.TritonService.verbose = options.verbose or options.verboseService
+    process.TritonService.fallback.verbose = options.verbose or options.verboseServer
     process.TritonService.fallback.useDocker = options.docker
     process.TritonService.fallback.imageName = "fastml/triton-torchgeo:23.09-py3-geometric"
     if options.device != "auto":
@@ -93,7 +90,7 @@ keepMsgs = ['TritonClient','TritonService']
 for producer in process._Process__producers.values():
     if hasattr(producer,'Client'):
         if hasattr(producer.Client,'verbose'):
-            producer.Client.verbose = options.verbose
+            producer.Client.verbose = options.verbose or options.verboseClient
             keepMsgs.extend([producer._TypedParameterizable__type,producer._TypedParameterizable__type+":TritonClient"])
         if hasattr(producer.Client,'compression'):
             producer.Client.compression = options.compression
@@ -113,7 +110,3 @@ if options.verbose:
 if options.tmi:
     from Validation.Performance.TimeMemorySummary import customise
     process = customise(process)
-
-if options.dump:
-    print(process.dumpPython())
-    sys.exit(0)
