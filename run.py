@@ -30,6 +30,7 @@ parser.add_argument("--compression", default="", type=str, choices=allowed_compr
 parser.add_argument("--ssl", default=False, action="store_true", help="enable SSL authentication for server communication")
 parser.add_argument("--device", default="auto", type=str, choices=allowed_devices, help="specify device for fallback server")
 parser.add_argument("--docker", default=False, action="store_true", help="use Docker for fallback server")
+parser.add_argument("--imageName", default="", type=str, help="container image name for fallback server")
 parser.add_argument("--tempDir", default="", type=str, help="temp directory for fallback server")
 parser.add_argument("--modifiers", default="", nargs='*', type=str, help="additional process modifiers")
 parser.add_argument("--tmi", default=False, action="store_true", help="include time/memory summary")
@@ -70,7 +71,7 @@ if options.sonic:
     process.TritonService.verbose = options.verbose or options.verboseService
     process.TritonService.fallback.verbose = options.verbose or options.verboseServer
     process.TritonService.fallback.useDocker = options.docker
-    process.TritonService.fallback.imageName = "fastml/triton-torchgeo:23.09-py3-geometric"
+    process.TritonService.fallback.imageName = options.imageName
     process.TritonService.fallback.tempDir = options.tempDir
     if options.device != "auto":
         process.TritonService.fallback.useGPU = options.device=="gpu"
