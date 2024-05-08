@@ -25,6 +25,7 @@ parser.add_argument("--verbose", default=False, action="store_true", help="enabl
 parser.add_argument("--verboseClient", default=False, action="store_true", help="enable verbose output for clients")
 parser.add_argument("--verboseServer", default=False, action="store_true", help="enable verbose output for server")
 parser.add_argument("--verboseService", default=False, action="store_true", help="enable verbose output for TritonService")
+parser.add_argument("--verboseDiscovery", default=False, action="store_true", help="enable verbose output just for server discovery in TritonService")
 parser.add_argument("--noShm", default=False, action="store_true", help="disable shared memory")
 parser.add_argument("--compression", default="", type=str, choices=allowed_compression, help="enable I/O compression")
 parser.add_argument("--ssl", default=False, action="store_true", help="enable SSL authentication for server communication")
@@ -68,7 +69,7 @@ if options.threads>0:
 process.maxEvents.input = cms.untracked.int32(options.maxEvents)
 
 if options.sonic:
-    process.TritonService.verbose = options.verbose or options.verboseService
+    process.TritonService.verbose = options.verbose or options.verboseService or options.verboseDiscovery
     process.TritonService.fallback.verbose = options.verbose or options.verboseServer
     process.TritonService.fallback.useDocker = options.docker
     process.TritonService.fallback.imageName = options.imageName
@@ -88,8 +89,15 @@ if options.sonic:
             )
         )
 
+keepMsgs = []
+if options.verbose or options.verboseDiscovery:
+    keepMsgs.append('TritonDiscovery')
+if options.verbose or options.verboseClient:
+    keepMsgs.append('TritonClient')
+if options.verbose or options.verboseService:
+    keepMsgs.append('TritonService')
+
 # propagate changes to all SONIC producers
-keepMsgs = ['TritonClient','TritonService']
 for producer in process._Process__producers.values():
     if hasattr(producer,'Client'):
         if hasattr(producer.Client,'verbose'):
@@ -100,15 +108,14 @@ for producer in process._Process__producers.values():
         if hasattr(producer.Client,'useSharedMemory'):
             producer.Client.useSharedMemory = options.shm
 
-if options.verbose:
-    process.load('FWCore/MessageService/MessageLogger_cfi')
-    process.MessageLogger.cerr.FwkReport.reportEvery = 500
-    for msg in keepMsgs:
-        setattr(process.MessageLogger.cerr,msg,
-            cms.untracked.PSet(
-                limit = cms.untracked.int32(10000000),
-            )
+process.load('FWCore/MessageService/MessageLogger_cfi')
+process.MessageLogger.cerr.FwkReport.reportEvery = 500
+for msg in keepMsgs:
+    setattr(process.MessageLogger.cerr,msg,
+        cms.untracked.PSet(
+            limit = cms.untracked.int32(10000000),
         )
+    )
 
 if options.tmi:
     from Validation.Performance.TimeMemorySummary import customise
