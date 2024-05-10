@@ -74,8 +74,7 @@ if options.sonic:
     process.TritonService.fallback.useDocker = options.docker
     process.TritonService.fallback.imageName = options.imageName
     process.TritonService.fallback.tempDir = options.tempDir
-    if options.device != "auto":
-        process.TritonService.fallback.useGPU = options.device=="gpu"
+    process.TritonService.fallback.device = options.device
     if len(options.address)>0:
         process.TritonService.servers.append(
             cms.PSet(
