@@ -10,6 +10,7 @@ def import_obj(src,obj):
 # choices
 allowed_compression = ["none","deflate","gzip"]
 allowed_devices = ["auto","cpu","gpu"]
+allowed_containers = ["apptainer","docker","podman"]
 
 parser = ArgumentParser(formatter_class=ArgumentDefaultsHelpFormatter)
 parser.add_argument("--config", default="step2_PAT", type=str, help="cmsDriver-generated config to import")
@@ -30,7 +31,7 @@ parser.add_argument("--noShm", default=False, action="store_true", help="disable
 parser.add_argument("--compression", default="", type=str, choices=allowed_compression, help="enable I/O compression")
 parser.add_argument("--ssl", default=False, action="store_true", help="enable SSL authentication for server communication")
 parser.add_argument("--device", default="auto", type=str, choices=allowed_devices, help="specify device for fallback server")
-parser.add_argument("--docker", default=False, action="store_true", help="use Docker for fallback server")
+parser.add_argument("--container", default="apptainer", type=str.lower, choices=allowed_containers, help="specify container for fallback server")
 parser.add_argument("--imageName", default="", type=str, help="container image name for fallback server")
 parser.add_argument("--tempDir", default="", type=str, help="temp directory for fallback server")
 parser.add_argument("--modifiers", default="", nargs='*', type=str, help="additional process modifiers")
@@ -71,7 +72,7 @@ process.maxEvents.input = cms.untracked.int32(options.maxEvents)
 if options.sonic:
     process.TritonService.verbose = options.verbose or options.verboseService or options.verboseDiscovery
     process.TritonService.fallback.verbose = options.verbose or options.verboseServer
-    process.TritonService.fallback.useDocker = options.docker
+    process.TritonService.fallback.container = options.container
     process.TritonService.fallback.imageName = options.imageName
     process.TritonService.fallback.tempDir = options.tempDir
     process.TritonService.fallback.device = options.device
