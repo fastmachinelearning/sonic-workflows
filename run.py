@@ -10,7 +10,7 @@ def import_obj(src,obj):
 # choices
 allowed_compression = ["none","deflate","gzip"]
 allowed_devices = ["auto","cpu","gpu"]
-allowed_containers = ["apptainer","docker","podman"]
+allowed_containers = ["apptainer","docker","podman","podman-hpc"]
 
 parser = ArgumentParser(formatter_class=ArgumentDefaultsHelpFormatter)
 parser.add_argument("--config", default="step2_PAT", type=str, help="cmsDriver-generated config to import")
