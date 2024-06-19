@@ -19,6 +19,8 @@ parser.add_argument("--noSonic", default=False, action="store_true", help="disab
 parser.add_argument("--serverName", default="default", type=str, help="name for server (used internally)")
 parser.add_argument("--address", default="", type=str, help="server address")
 parser.add_argument("--port", default=8001, type=int, help="server port")
+parser.add_argument("--timeout", default=None, type=int, help="timeout for requests")
+parser.add_argument("--timeoutUnit", default=None, type=str, help="unit for timeout")
 parser.add_argument("--params", default="", type=str, help="json file containing server address/port")
 parser.add_argument("--threads", default=1, type=int, help="number of threads")
 parser.add_argument("--streams", default=0, type=int, help="number of streams")
@@ -107,6 +109,10 @@ for producer in process._Process__producers.values():
             producer.Client.compression = options.compression
         if hasattr(producer.Client,'useSharedMemory'):
             producer.Client.useSharedMemory = options.shm
+        if options.timeout is not None:
+            producer.Client.timeout = cms.untracked.uint32(options.timeout)
+        if options.timeoutUnit is not None:
+            producer.Client.timeoutUnit = cms.untracked.string(options.timeoutUnit)
 
 process.load('FWCore/MessageService/MessageLogger_cfi')
 process.MessageLogger.cerr.FwkReport.reportEvery = 500
