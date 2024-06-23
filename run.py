@@ -100,15 +100,13 @@ if options.verbose or options.verboseService:
     keepMsgs.append('TritonService')
 
 # propagate changes to all SONIC producers
-for producer in process._Process__producers.values():
+for pname,producer in process._Process__producers.items():
     if hasattr(producer,'Client'):
-        if hasattr(producer.Client,'verbose'):
-            producer.Client.verbose = options.verbose or options.verboseClient
-            keepMsgs.extend([producer._TypedParameterizable__type,producer._TypedParameterizable__type+":TritonClient"])
-        if hasattr(producer.Client,'compression'):
-            producer.Client.compression = options.compression
-        if hasattr(producer.Client,'useSharedMemory'):
-            producer.Client.useSharedMemory = options.shm
+        producer.Client.verbose = cms.untracked.bool(options.verbose or options.verboseClient)
+        if producer.Client.verbose:
+            keepMsgs.extend([pname,pname+":TritonClient"])
+        producer.Client.compression = cms.untracked.string(options.compression)
+        producer.Client.useSharedMemory = cms.untracked.bool(options.shm)
         if options.timeout is not None:
             producer.Client.timeout = cms.untracked.uint32(options.timeout)
         if options.timeoutUnit is not None:
