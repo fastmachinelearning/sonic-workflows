@@ -77,7 +77,7 @@ if len(options.redir)>0:
         options.redir = "root://cmsxrootd.fnal.gov//store/test/xrootd/"+options.redir
     process.source.fileNames = [(options.redir if val.startswith("/") else "")+val for val in process.source.fileNames]
 
-if options.sonic:
+if hasattr(process,'TritonService'):
     process.TritonService.verbose = options.verbose or options.verboseService or options.verboseDiscovery
     process.TritonService.fallback.verbose = options.verbose or options.verboseServer
     process.TritonService.fallback.container = options.container
