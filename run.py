@@ -14,6 +14,7 @@ allowed_containers = ["apptainer","docker","podman","podman-hpc"]
 
 parser = ArgumentParser(formatter_class=ArgumentDefaultsHelpFormatter)
 parser.add_argument("--config", default="step2_PAT", type=str, help="cmsDriver-generated config to import")
+parser.add_argument("--redir", default="", type=str, help="specify xrootd redirector (or site name) for input files")
 parser.add_argument("--maxEvents", default=-1, type=int, help="Number of events to process (-1 for all)")
 parser.add_argument("--noSonic", default=False, action="store_true", help="disable SONIC in workflow")
 parser.add_argument("--serverName", default="default", type=str, help="name for server (used internally)")
@@ -70,6 +71,11 @@ if options.threads>0:
     process.options.numberOfStreams = options.streams
 
 process.maxEvents.input = cms.untracked.int32(options.maxEvents)
+
+if len(options.redir)>0:
+    if options.redir[0]=="T":
+        options.redir = "root://cmsxrootd.fnal.gov//store/test/xrootd/"+options.redir
+    process.source.fileNames = [(options.redir if val.startswith("/") else "")+val for val in process.source.fileNames]
 
 if options.sonic:
     process.TritonService.verbose = options.verbose or options.verboseService or options.verboseDiscovery
