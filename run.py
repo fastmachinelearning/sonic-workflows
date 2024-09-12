@@ -1,5 +1,4 @@
 import FWCore.ParameterSet.Config as cms
-from FWCore.ParameterSet.VarParsing import VarParsing
 import sys
 from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
 

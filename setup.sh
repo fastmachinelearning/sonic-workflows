@@ -3,9 +3,9 @@
 ACCESS=ssh
 CORES=8
 BATCH=""
-CMSSWVER=CMSSW_14_1_0_pre0
+CMSSWVER=CMSSW_14_1_0_pre7
 CMSSWVERS=(
-CMSSW_14_1_0_pre0 \
+CMSSW_14_1_0_pre7 \
 )
 
 usage(){
@@ -62,7 +62,8 @@ fi
 declare -A OS_PREFIX
 OS_PREFIX[7]=slc7
 OS_PREFIX[8]=el8
-POSSIBLE_VERSIONS=( 7 8 )
+OS_PREFIX[8]=el9
+POSSIBLE_VERSIONS=( 7 8 9 )
 if [[ -f "/etc/redhat-release" ]]; then
 	VERSION_TMP=$(grep -o "[0-9]\+\." /etc/redhat-release | head -n1 | cut -d'.' -f1)
 	if [[ "${POSSIBLE_VERSIONS[@]} " =~ "${VERSION_TMP}" ]]; then
@@ -89,7 +90,7 @@ scram project $CMSSWVER
 cd ${CMSSWVER}/src
 eval `scramv1 runtime -sh`
 git cms-init $ACCESS_CMSSW $BATCH
-git cms-merge-topic -u fastmachinelearning:cmsTritonUpdates
+git cms-merge-topic -u fastmachinelearning:cmsTritonUpdates2
 git clone ${ACCESS_GITHUB}fastmachinelearning/sonic-workflows -b CMSSW_14_1_X
 cd ${CMSSW_BASE}/src
 scram b -j ${CORES}

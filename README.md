@@ -9,7 +9,7 @@ wget https://raw.githubusercontent.com/fastmachinelearning/sonic-workflows/CMSSW
 chmod +x setup.sh
 ./setup.sh
 voms-proxy-init --rfc --voms cms -valid 192:00
-cd CMSSW_14_1_0_pre0/src/sonic-workflows
+cd CMSSW_14_1_0_pre7/src/sonic-workflows
 cmsenv
 ```
 
