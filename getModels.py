@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import FWCore.ParameterSet.Config as cms
-import os,sys,glob
+import os,sys,glob,contextlib
 from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
 from FWCore.ParameterSet.pfnInPath import pfnInPath
 
@@ -13,6 +13,7 @@ parser = ArgumentParser(formatter_class=ArgumentDefaultsHelpFormatter)
 parser.add_argument("--config", default="step2_PAT", type=str, help="cmsDriver-generated config to import")
 parser.add_argument("--modifiers", default="", nargs='*', type=str, help="additional process modifiers")
 parser.add_argument("--noSonic", default=False, action="store_true", help="disable SONIC in workflow")
+parser.add_argument("--verbose", default=False, action="store_true", help="enable verbose output")
 options = parser.parse_args()
 
 options.sonic = not options.noSonic
@@ -28,7 +29,10 @@ for modifier in modifier_names:
     # need to do this before process is created/imported
     modifiers[-1]._setChosen()
 
-process = import_obj(options.config,"process")
+context_stdout = contextlib.nullcontext if options.verbose else contextlib.redirect_stdout
+context_stderr = contextlib.nullcontext if options.verbose else contextlib.redirect_stderr
+with context_stdout(open(os.devnull,'w')), context_stderr(open(os.devnull,'w')):
+	process = import_obj(options.config,"process")
 if len(modifiers)>0:
     process._Process__modifiers = process._Process__modifiers + tuple(modifiers)
 
