@@ -58,3 +58,10 @@ UL re-miniAOD workflows for other years: 1325.516, 1325.5161, 1325.518
 
 Run3/Phase2 SONIC-enabled workflows are available from `runTheMatrix.py -w upgrade -n` with suffix `.9001`
 
+## Listing models
+
+The following script provides a list of all models possibly used by a config:
+```
+./getModels.py --config step2_PAT
+```
+(Some of the listed models may not actually be used, depending on task and output configurations, but that can only be evaluated by fully executing the config.)
