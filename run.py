@@ -7,7 +7,7 @@ def import_obj(src,obj):
     return getattr(__import__(src,fromlist=[obj]),obj)
 
 parser = getParser()
-parser.add_argument("--config", default="step2_PAT", type=str, help="cmsDriver-generated config to import")
+parser.add_argument("--config", default="step4_PAT", type=str, help="cmsDriver-generated config to import")
 parser.add_argument("--redir", default="", type=str, help="specify xrootd redirector (or site name) for input files")
 parser.add_argument("--noSonic", default=False, action="store_true", help="disable SONIC in workflow")
 parser.add_argument("--modifiers", default="", nargs='*', type=str, help="additional process modifiers")

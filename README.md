@@ -42,26 +42,23 @@ cmsRun run.py --maxEvents 100
 
 ## Driver commands
 
-2017 ultra-legacy re-miniAOD:
+2023 miniAOD:
 ```bash
-runTheMatrix.py -l 1325.517 --dryRun --command="--no_exec"
+runTheMatrix.py -w upgrade -l 12434.21 --dryRun --command="--no_exec"
 ```
 
 Modified commands:
+```bash
+./get_files_on_disk.py /TTtoLNu2Q_TuneCP5_13p6TeV_powheg-pythia8/Run3Summer23DRPremix-130X_mcRun3_2023_realistic_v14-v2/AODSIM -o files__TTtoLNu2Q_TuneCP5_13p6TeV_powheg-pythia8__Run3Summer23DRPremix-130X_mcRun3_2023_realistic_v14-v2__AODSIM.txt
+cat files__TTtoLNu2Q_TuneCP5_13p6TeV_powheg-pythia8__Run3Summer23DRPremix-130X_mcRun3_2023_realistic_v14-v2__AODSIM.txt | head -n 3 > files__TTtoLNu2Q_TuneCP5_13p6TeV_powheg-pythia8__Run3Summer23DRPremix-130X_mcRun3_2023_realistic_v14-v2__AODSIM__truncated.txt
+cmsDriver.py step4  -s PAT --conditions auto:phase1_2023_realistic --datatier MINIAODSIM -n 10 --eventcontent MINIAODSIM --geometry DB:Extended --era Run3_2023 --no_exec --filein filelist:files__TTtoLNu2Q_TuneCP5_13p6TeV_powheg-pythia8__Run3Summer23DRPremix-130X_mcRun3_2023_realistic_v14-v2__AODSIM__truncated.txt --fileout file:step4.root
 ```
-dasgoclient --limit 0 --query 'file dataset=/TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8/RunIISummer20UL17RECO-106X_mc2017_realistic_v6-v2/AODSIM site=T2_IT_Pisa' | sort -u > step1_dasquery.log
-cat step1_dasquery.log | head -n 3 > step1_dasquery_truncated.log
-cmsDriver.py step2  -s PAT --era Run2_2017 -n 100 --process PAT --conditions auto:phase1_2017_realistic --mc  --scenario pp --eventcontent MINIAODSIM --datatier MINIAODSIM --procModifiers run2_miniAOD_UL_preSummer20 --no_exec --filein filelist:step1_dasquery_truncated.log --fileout file:step2.root
-```
-
-UL re-miniAOD workflows for other years: 1325.516, 1325.5161, 1325.518
-
 Run3/Phase2 SONIC-enabled workflows are available from `runTheMatrix.py -w upgrade -n` with suffix `.9001`
 
 ## Listing models
 
 The following script provides a list of all models possibly used by a config:
 ```
-./getModels.py --config step2_PAT
+./getModels.py --config step4_PAT
 ```
 (Some of the listed models may not actually be used, depending on task and output configurations, but that can only be evaluated by fully executing the config.)
