@@ -30,9 +30,9 @@ process.maxEvents = cms.untracked.PSet(
 # Input source
 process.source = cms.Source("PoolSource",
     fileNames = cms.untracked.vstring(
-        '/store/mc/Run3Summer23DRPremix/TTtoLNu2Q_TuneCP5_13p6TeV_powheg-pythia8/AODSIM/130X_mcRun3_2023_realistic_v14-v2/40001/e7d41c61-55bb-425f-9fae-4b3030c0f13d.root',
-        '/store/mc/Run3Summer23DRPremix/TTtoLNu2Q_TuneCP5_13p6TeV_powheg-pythia8/AODSIM/130X_mcRun3_2023_realistic_v14-v2/2540006/6d6ef85c-6c7d-44a4-b90f-db172bf1d6cc.root',
-        '/store/mc/Run3Summer23DRPremix/TTtoLNu2Q_TuneCP5_13p6TeV_powheg-pythia8/AODSIM/130X_mcRun3_2023_realistic_v14-v2/2540001/1170fa30-f21e-4a22-923b-25b3124d29cf.root'
+        '/store/mc/Run3Summer23DRPremix/TTtoLNu2Q_TuneCP5_13p6TeV_powheg-pythia8/AODSIM/130X_mcRun3_2023_realistic_v14-v2/2530008/2d2fdc97-101c-4b13-bfc3-b6363553bd26.root',
+        '/store/mc/Run3Summer23DRPremix/TTtoLNu2Q_TuneCP5_13p6TeV_powheg-pythia8/AODSIM/130X_mcRun3_2023_realistic_v14-v2/2530008/c7383004-6a15-46b7-9b62-78f43856a3e9.root',
+        '/store/mc/Run3Summer23DRPremix/TTtoLNu2Q_TuneCP5_13p6TeV_powheg-pythia8/AODSIM/130X_mcRun3_2023_realistic_v14-v2/2530008/de2e9b64-e4d4-420c-a7dc-d2fc31d9e092.root'
     ),
     secondaryFileNames = cms.untracked.vstring()
 )
@@ -205,6 +205,7 @@ process = miniAOD_customizeAllMC(process)
 
 # Customisation from command line
 
+process.source.delayReadingEventProducts = cms.untracked.bool(False)
 # Add early deletion of temporary data products to reduce peak memory need
 from Configuration.StandardSequences.earlyDeleteSettings_cff import customiseEarlyDelete
 process = customiseEarlyDelete(process)
