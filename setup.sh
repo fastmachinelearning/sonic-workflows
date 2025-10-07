@@ -91,5 +91,7 @@ cd ${CMSSWVER}/src
 eval `scramv1 runtime -sh`
 git cms-init $ACCESS_CMSSW $BATCH
 git clone ${ACCESS_GITHUB}fastmachinelearning/sonic-workflows -b CMSSW_16_0_X
+git clone ${ACCESS_GITHUB}kpedro88/CondorProduction Condor/Production
 cd ${CMSSW_BASE}/src
 scram b -j ${CORES}
+$CMSSW_BASE/src/Condor/Production/scripts/postInstall.sh -b $CMSSW_BASE/src/sonic-workflows/batch -c -p
