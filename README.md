@@ -42,6 +42,16 @@ cmsRun run.py --maxEvents 100
 
 ## Driver commands
 
+2018 DRN:
+```bash
+runTheMatrix.py -w upgrade -l 10805.31 --dryRun --command="--no_exec"
+```
+
+Modified command (run step1 and step2 first to generate the input file `step2.root`):
+```bash
+cmsDriver.py step3  -s RAW2DIGI,L1Reco,RECO,RECOSIM,PAT --conditions auto:phase1_2018_realistic --datatier GEN-SIM-RECO,MINIAODSIM -n 10 --eventcontent RECOSIM,MINIAODSIM --geometry DB:Extended --era Run2_2018 --procModifiers enableSonicTriton,photonDRN --no_exec --filein  file:step2.root  --fileout file:step3.root
+```
+
 2023 miniAOD:
 ```bash
 runTheMatrix.py -w upgrade -l 12434.21 --dryRun --command="--no_exec"
