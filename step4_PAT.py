@@ -17,8 +17,7 @@ process.load('Configuration.EventContent.EventContent_cff')
 process.load('SimGeneral.MixingModule.mixNoPU_cfi')
 process.load('Configuration.StandardSequences.GeometryRecoDB_cff')
 process.load('Configuration.StandardSequences.MagneticField_cff')
-process.load('PhysicsTools.PatAlgos.slimming.metFilterPaths_cff')
-process.load('Configuration.StandardSequences.PATMC_cff')
+process.load('Configuration.StandardSequences.PAT_cff')
 process.load('Configuration.StandardSequences.EndOfProcess_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 
@@ -30,9 +29,9 @@ process.maxEvents = cms.untracked.PSet(
 # Input source
 process.source = cms.Source("PoolSource",
     fileNames = cms.untracked.vstring(
-        '/store/mc/Run3Summer23DRPremix/TTtoLNu2Q_TuneCP5_13p6TeV_powheg-pythia8/AODSIM/130X_mcRun3_2023_realistic_v14-v2/2530008/2d2fdc97-101c-4b13-bfc3-b6363553bd26.root',
-        '/store/mc/Run3Summer23DRPremix/TTtoLNu2Q_TuneCP5_13p6TeV_powheg-pythia8/AODSIM/130X_mcRun3_2023_realistic_v14-v2/2530008/c7383004-6a15-46b7-9b62-78f43856a3e9.root',
-        '/store/mc/Run3Summer23DRPremix/TTtoLNu2Q_TuneCP5_13p6TeV_powheg-pythia8/AODSIM/130X_mcRun3_2023_realistic_v14-v2/2530008/de2e9b64-e4d4-420c-a7dc-d2fc31d9e092.root'
+        '/store/mc/Run3Summer23DRPremix/TTtoLNu2Q_TuneCP5_13p6TeV_powheg-pythia8/AODSIM/130X_mcRun3_2023_realistic_v14-v2/40000/96adfc43-2798-49b1-8a21-7a0234b24fbc.root',
+        '/store/mc/Run3Summer23DRPremix/TTtoLNu2Q_TuneCP5_13p6TeV_powheg-pythia8/AODSIM/130X_mcRun3_2023_realistic_v14-v2/2530000/539b7207-8485-40fd-a3c1-d266b565bb24.root',
+        '/store/mc/Run3Summer23DRPremix/TTtoLNu2Q_TuneCP5_13p6TeV_powheg-pythia8/AODSIM/130X_mcRun3_2023_realistic_v14-v2/2530002/73ea51d9-623e-4cda-ae62-e2f48152ef4c.root'
     ),
     secondaryFileNames = cms.untracked.vstring()
 )
@@ -187,7 +186,7 @@ process.endjob_step = cms.EndPath(process.endOfProcess)
 process.MINIAODSIMoutput_step = cms.EndPath(process.MINIAODSIMoutput)
 
 # Schedule definition
-process.schedule = cms.Schedule(process.Flag_HBHENoiseFilter,process.Flag_HBHENoiseIsoFilter,process.Flag_CSCTightHaloFilter,process.Flag_CSCTightHaloTrkMuUnvetoFilter,process.Flag_CSCTightHalo2015Filter,process.Flag_globalTightHalo2016Filter,process.Flag_globalSuperTightHalo2016Filter,process.Flag_HcalStripHaloFilter,process.Flag_hcalLaserEventFilter,process.Flag_EcalDeadCellTriggerPrimitiveFilter,process.Flag_EcalDeadCellBoundaryEnergyFilter,process.Flag_ecalBadCalibFilter,process.Flag_goodVertices,process.Flag_eeBadScFilter,process.Flag_ecalLaserCorrFilter,process.Flag_trkPOGFilters,process.Flag_chargedHadronTrackResolutionFilter,process.Flag_muonBadTrackFilter,process.Flag_BadChargedCandidateFilter,process.Flag_BadPFMuonFilter,process.Flag_BadPFMuonDzFilter,process.Flag_hfNoisyHitsFilter,process.Flag_BadChargedCandidateSummer16Filter,process.Flag_BadPFMuonSummer16Filter,process.Flag_trkPOG_manystripclus53X,process.Flag_trkPOG_toomanystripclus53X,process.Flag_trkPOG_logErrorTooManyClusters,process.endjob_step,process.MINIAODSIMoutput_step)
+process.schedule = cms.Schedule(process.Flag_BadChargedCandidateFilter,process.Flag_BadChargedCandidateSummer16Filter,process.Flag_BadPFMuonDzFilter,process.Flag_BadPFMuonFilter,process.Flag_BadPFMuonSummer16Filter,process.Flag_CSCTightHalo2015Filter,process.Flag_CSCTightHaloFilter,process.Flag_CSCTightHaloTrkMuUnvetoFilter,process.Flag_EcalDeadCellBoundaryEnergyFilter,process.Flag_EcalDeadCellTriggerPrimitiveFilter,process.Flag_HBHENoiseFilter,process.Flag_HBHENoiseIsoFilter,process.Flag_HcalStripHaloFilter,process.Flag_chargedHadronTrackResolutionFilter,process.Flag_ecalBadCalibFilter,process.Flag_ecalLaserCorrFilter,process.Flag_eeBadScFilter,process.Flag_globalSuperTightHalo2016Filter,process.Flag_globalTightHalo2016Filter,process.Flag_goodVertices,process.Flag_hcalLaserEventFilter,process.Flag_hfNoisyHitsFilter,process.Flag_muonBadTrackFilter,process.Flag_trackingFailureFilter,process.Flag_trkPOGFilters,process.Flag_trkPOG_logErrorTooManyClusters,process.Flag_trkPOG_manystripclus53X,process.Flag_trkPOG_toomanystripclus53X,process.endjob_step,process.MINIAODSIMoutput_step)
 process.schedule.associate(process.patTask)
 from PhysicsTools.PatAlgos.tools.helpers import associatePatAlgosToolsTask
 associatePatAlgosToolsTask(process)
@@ -195,10 +194,10 @@ associatePatAlgosToolsTask(process)
 
 # customisation of the process.
 
-# Automatic addition of the customisation function from PhysicsTools.PatAlgos.slimming.miniAOD_tools
-from PhysicsTools.PatAlgos.slimming.miniAOD_tools import miniAOD_customizeAllMC 
+# Automatic addition of the customisation function from Configuration.StandardSequences.PAT_cff
+from Configuration.StandardSequences.PAT_cff import miniAOD_customizeAllMC 
 
-#call to customisation function miniAOD_customizeAllMC imported from PhysicsTools.PatAlgos.slimming.miniAOD_tools
+#call to customisation function miniAOD_customizeAllMC imported from Configuration.StandardSequences.PAT_cff
 process = miniAOD_customizeAllMC(process)
 
 # End of customisation functions
