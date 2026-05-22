@@ -3,9 +3,9 @@
 ACCESS=ssh
 CORES=8
 BATCH=""
-CMSSWVER=CMSSW_16_0_0_pre4
+CMSSWVER=CMSSW_17_0_0_pre1
 CMSSWVERS=(
-CMSSW_16_0_0_pre4 \
+CMSSW_17_0_0_pre1 \
 )
 
 usage(){
@@ -85,12 +85,13 @@ else
 	fi
 fi
 
-export SCRAM_ARCH=${SLC_VERSION}_amd64_gcc12
+export SCRAM_ARCH=${SLC_VERSION}_amd64_gcc13
 scram project $CMSSWVER
 cd ${CMSSWVER}/src
 eval `scramv1 runtime -sh`
 git cms-init $ACCESS_CMSSW $BATCH
-git clone ${ACCESS_GITHUB}fastmachinelearning/sonic-workflows -b CMSSW_16_0_X
+git cms-merge-topic -u fastmachinelearning:TritonSecurity
+git clone ${ACCESS_GITHUB}fastmachinelearning/sonic-workflows -b CMSSW_17_0_X
 git clone ${ACCESS_GITHUB}kpedro88/CondorProduction Condor/Production
 cd ${CMSSW_BASE}/src
 scram b -j ${CORES}
