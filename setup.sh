@@ -3,9 +3,9 @@
 ACCESS=ssh
 CORES=8
 BATCH=""
-CMSSWVER=CMSSW_17_0_0_pre1
+CMSSWVER=CMSSW_17_0_0_pre5
 CMSSWVERS=(
-CMSSW_17_0_0_pre1 \
+CMSSW_17_0_0_pre5 \
 )
 
 usage(){
