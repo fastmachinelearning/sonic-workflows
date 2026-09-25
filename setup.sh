@@ -95,4 +95,4 @@ git clone ${ACCESS_GITHUB}fastmachinelearning/sonic-workflows -b CMSSW_17_0_X
 git clone ${ACCESS_GITHUB}kpedro88/CondorProduction Condor/Production
 cd ${CMSSW_BASE}/src
 scram b -j ${CORES}
-$CMSSW_BASE/src/Condor/Production/scripts/postInstall.sh -b $CMSSW_BASE/src/sonic-workflows/batch -c -p
+$CMSSW_BASE/src/Condor/Production/scripts/postInstall.sh -b $CMSSW_BASE/src/sonic-workflows/batch -c -p -v 10.9.0.post1
